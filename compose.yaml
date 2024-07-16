@@ -1,0 +1,11 @@
+services:
+  db:
+    image: mysql:5.7
+    container_name: charity_bags
+    ports:
+      - 3306:3306
+    volumes:
+      - "./.data/db:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+      MYSQL_DATABASE: charity_bags
