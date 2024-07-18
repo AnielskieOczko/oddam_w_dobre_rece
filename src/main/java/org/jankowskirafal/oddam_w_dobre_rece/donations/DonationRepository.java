@@ -1,0 +1,8 @@
+package org.jankowskirafal.oddam_w_dobre_rece.donations;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface DonationRepository extends JpaRepository<Donation, Long> {
+}
