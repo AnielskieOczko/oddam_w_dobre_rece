@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jankowskirafal.oddam_w_dobre_rece.categories.Category;
 import org.jankowskirafal.oddam_w_dobre_rece.institutions.Institution;
+import org.jankowskirafal.oddam_w_dobre_rece.users.User;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -37,12 +38,15 @@ public class Donation {
     @JoinColumn(name = "institutionId", nullable = false)
     Institution institution;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     String street;
     String city;
     String zip;
     LocalDate pickUpDate;
     LocalTime pickUpTime;
     String pickUpComment;
-
 
 }
