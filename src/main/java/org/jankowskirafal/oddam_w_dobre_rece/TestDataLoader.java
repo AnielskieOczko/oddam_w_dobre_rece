@@ -10,6 +10,8 @@ import org.jankowskirafal.oddam_w_dobre_rece.donations.Donation;
 import org.jankowskirafal.oddam_w_dobre_rece.donations.DonationService;
 import org.jankowskirafal.oddam_w_dobre_rece.institutions.Institution;
 import org.jankowskirafal.oddam_w_dobre_rece.institutions.InstitutionService;
+import org.jankowskirafal.oddam_w_dobre_rece.users.User;
+import org.jankowskirafal.oddam_w_dobre_rece.users.UserService;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -25,9 +27,10 @@ import java.util.*;
 public class TestDataLoader {
 
 
-    InstitutionService institutionService;
-    CategoryService categoryService;
-    DonationService donationService;
+    private final InstitutionService institutionService;
+    private final CategoryService categoryService;
+    private final DonationService donationService;
+    private final UserService userService;
 
     private static final Random random = new Random();
 
@@ -53,6 +56,10 @@ public class TestDataLoader {
     public void onApplicationStartUp() {
 
         log.info("Starting up");
+
+        log.info("Loading users");
+        loadUsers();
+
         log.info("Loading categories");
         loadCategories();
 
@@ -62,8 +69,23 @@ public class TestDataLoader {
         log.info("Loading donations");
         loadDonations();
 
-
         log.info("Loading test data completed");
+
+    }
+
+    private void loadUsers() {
+
+        User user = new User();
+        user.setEmail("testUser@gmail.com");
+        user.setPassword("password");
+
+        User user1 = new User();
+        user1.setEmail("testUser1@gmail.com");
+        user1.setPassword("password1");
+
+        userService.addUser(user);
+        userService.addUser(user1);
+
 
     }
 
@@ -109,6 +131,8 @@ public class TestDataLoader {
     protected void loadDonations() {
         List<Institution> institutions = institutionService.getAll();
         List<Donation> donations = new ArrayList<>();
+        List<User> users = userService.getAll();
+        users.add(null);
 
         for (int i = 0; i < 10; i++) {
             Donation donation = new Donation();
@@ -140,6 +164,8 @@ public class TestDataLoader {
             donation.setPickUpTime(LocalTime.of(random.nextInt(12) + 8, 0));
 
             donation.setPickUpComment(COMMENTS[random.nextInt(COMMENTS.length)]);
+
+            donation.setUser(users.get(random.nextInt(users.size())));
 
             donations.add(donation);
         }
