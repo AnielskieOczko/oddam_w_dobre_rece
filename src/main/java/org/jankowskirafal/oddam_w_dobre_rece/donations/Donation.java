@@ -44,5 +44,4 @@ public class Donation {
     LocalTime pickUpTime;
     String pickUpComment;
 
-
 }
