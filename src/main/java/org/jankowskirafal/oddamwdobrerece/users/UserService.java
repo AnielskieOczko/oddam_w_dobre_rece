@@ -1,11 +1,10 @@
-package org.jankowskirafal.oddam_w_dobre_rece.users;
+package org.jankowskirafal.oddamwdobrerece.users;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Transactional

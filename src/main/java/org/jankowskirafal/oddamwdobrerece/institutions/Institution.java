@@ -1,13 +1,10 @@
-package org.jankowskirafal.oddam_w_dobre_rece.institutions;
+package org.jankowskirafal.oddamwdobrerece.institutions;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "institutions")
@@ -15,6 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class Institution {
 
     @Id

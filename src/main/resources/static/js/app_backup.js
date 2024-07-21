@@ -1,4 +1,5 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
+
     /**
      * Form Select
      */
@@ -72,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function() {
     /**
      * Hide elements when clicked on document
      */
-    document.addEventListener("click", function(e) {
+    document.addEventListener("click", function (e) {
         const target = e.target;
         const tagName = target.tagName;
 
@@ -115,20 +116,6 @@ document.addEventListener("DOMContentLoaded", function() {
         init() {
             this.events();
             this.updateForm();
-
-            // Attach event listeners for summary updates (only once)
-            document.querySelectorAll('input[name="categories"], input[name="donation.quantity"]').forEach(input => {
-                input.addEventListener('change', this.updateQuantity.bind(this));
-            });
-
-            // Attach event listeners for summary updates (only once)
-            document.querySelectorAll('input[name="categories"], input[name="donation.quantity"]').forEach(input => {
-                input.addEventListener('change', this.updateDonationSummary.bind(this));
-            });
-
-            document.querySelectorAll('input[type="radio"][name="donation.institution"]').forEach(input => {
-                input.addEventListener('change', this.updateOrganizationSummary.bind(this));
-            });
         }
 
         /**
@@ -153,7 +140,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
             });
 
-            // No need for a form submit event listener here
+            // Form submit
+            // this.$form.querySelector("form").addEventListener("submit", e => this.submit(e));
         }
 
         /**
@@ -176,15 +164,41 @@ document.addEventListener("DOMContentLoaded", function() {
             this.$stepInstructions[0].parentElement.parentElement.hidden = this.currentStep >= 5;
             this.$step.parentElement.hidden = this.currentStep >= 5;
 
+
+            // Set up address input listeners when step 4 becomes active
             if (this.currentStep === 4) {
                 this.setupAddressListeners();
             }
+
+            // Update donation summary ONLY when step 1 is active (adjust step number if needed)
+            if (this.currentStep === 1) {
+                this.updateDonationSummary();
+            }
+
+            // Update organization summary ONLY when step 3 is active (adjust step number if needed)
+            if (this.currentStep === 3) {
+                this.updateOrganizationSummary();
+            }
+            if (this.currentStep === 2) {
+                this.updateQuantity();
+            }
+
+            document.querySelectorAll('input[name="categories"], input[name="bags"]').forEach(input => {
+                input.addEventListener('change', this.updateDonationSummary.bind(this)); // Use bind(this)!
+            });
+
+            document.querySelectorAll('input[type="radio"][name="donation.institution"]').forEach(input => {
+                input.addEventListener('change', this.updateOrganizationSummary.bind(this));
+            });
+
+            document.querySelectorAll('input[type="number"][name="donation.quantity"]').forEach(input => {
+                input.addEventListener('change', this.updateQuantity.bind(this));
+            });
         }
 
         setupAddressListeners() {
-            const addressInputsContainer = document.querySelector('.form-section--columns'); // Assuming this is your container
-            const addressInputs = addressInputsContainer.querySelectorAll(
-                'input[name="donation.street"], input[name="donation.city"], input[name="donation.zip"], input[name="donation.phone"], input[name="donation.pickUpDate"], input[name="donation.pickUpTime"], textarea[name="donation.pickUpComment"]'
+            const addressInputs = this.$form.querySelectorAll(
+                'input[name="street"], input[name="city"], input[name="postcode"], input[name="phone"], input[name="date"], input[name="time"], textarea[name="more_info"]'
             );
 
             console.log(addressInputs); // Check if elements are selected
@@ -195,38 +209,48 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
 
+
         updateQuantity() {
+            const selectedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked'))
+                .map(checkbox => checkbox.parentElement.nextElementSibling.textContent);
             const quantity = document.querySelector('input[name="donation.quantity"]').value || 0;
-            const quantitySummary = quantity > 0 ? `${quantity} ${quantity > 1 ? 'worki' : 'worek'}` : '';
-            document.getElementById('donationSummary').textContent = quantitySummary;
+            console.log(quantity)
+
+            const summaryText = quantity > 0
+                ? `${quantity} ${quantity > 1 ? 'worki' : 'worek'} ${selectedCategories.join(', ')}`
+                : '';
+            console.log(summaryText)
+            document.getElementById('donationSummary').textContent = summaryText;
         }
 
         updateDonationSummary() {
             const selectedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked'))
                 .map(checkbox => checkbox.parentElement.nextElementSibling.textContent);
-            console.log("selectedCategories: " + selectedCategories)
-            const quantitySummary = document.getElementById('donationSummary').textContent;
-            console.log("quantitySummary: " + quantitySummary)
-            const summaryText = quantitySummary ? `${quantitySummary} ${selectedCategories.join(', ')}` : '';
-            document.getElementById('donationSummary').textContent = summaryText;
-            console.log("summary text: " + summaryText)
         }
 
         updateOrganizationSummary() {
+            // Select the checked radio button using its type and checked state
             const selectedOrganization = document.querySelector('input[type="radio"][name="donation.institution"]:checked');
+            console.log("Selected Organization Element:", selectedOrganization); // Check if selected correctly
+
+            // Get the title text from the parent label element
             const organizationSummary = selectedOrganization
                 ? selectedOrganization.closest('label').querySelector('.title').textContent
                 : '';
+            console.log("Organization Summary Text:", organizationSummary); // Check extracted text
+
             document.getElementById('organizationSummary').textContent = `Dla ${organizationSummary}`;
         }
 
+
+
+
         updateDonationDelivery() {
             const updateField = (inputName, summaryId) => {
-                const addressInputsContainer = document.querySelector('.form-section--columns');
-                let inputElement = addressInputsContainer.querySelector(`input[name="${inputName}"]`);
+                let inputElement = this.$form.querySelector(`input[name="${inputName}"]`);
 
                 if (!inputElement) {
-                    inputElement = addressInputsContainer.querySelector(`textarea[name="${inputName}"]`);
+                    inputElement = this.$form.querySelector(`textarea[name="${inputName}"]`);
                 }
 
                 if (inputElement) {
@@ -244,16 +268,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             };
 
-            // Update all summary fields (make sure input names are consistent)
+            // Update all summary fields
             updateField('donation.street', 'streetSummary');
             updateField('donation.city', 'citySummary');
             updateField('donation.zip', 'zipSummary');
             updateField('donation.phone', 'phoneSummary');
 
-            updateField('donation.pickUpDate', 'pickUpDateSummary');
-            updateField('donation.pickUpTime', 'pickUpTimeSummary');
-            updateField('donation.pickUpComment', 'pickUpCommentSummary');
+            updateField('donation.date', 'pickUpDateSummary');
+            updateField('donation.time', 'pickUpTimeSummary');
+            updateField('donation.more_info', 'pickUpCommentSummary');
         }
+
     }
 
     const form = document.querySelector(".form--steps");

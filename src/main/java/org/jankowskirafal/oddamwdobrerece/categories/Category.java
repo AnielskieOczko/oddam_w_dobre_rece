@@ -1,10 +1,7 @@
-package org.jankowskirafal.oddam_w_dobre_rece.categories;
+package org.jankowskirafal.oddamwdobrerece.categories;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "categories")
@@ -12,6 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class Category {
 
     @Id

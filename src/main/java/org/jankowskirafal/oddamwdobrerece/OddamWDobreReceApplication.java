@@ -1,4 +1,4 @@
-package org.jankowskirafal.oddam_w_dobre_rece;
+package org.jankowskirafal.oddamwdobrerece;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,17 +1,17 @@
-package org.jankowskirafal.oddam_w_dobre_rece;
+package org.jankowskirafal.oddamwdobrerece;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jankowskirafal.oddam_w_dobre_rece.categories.Category;
-import org.jankowskirafal.oddam_w_dobre_rece.categories.CategoryService;
-import org.jankowskirafal.oddam_w_dobre_rece.categories.CategoryType;
-import org.jankowskirafal.oddam_w_dobre_rece.donations.Donation;
-import org.jankowskirafal.oddam_w_dobre_rece.donations.DonationService;
-import org.jankowskirafal.oddam_w_dobre_rece.institutions.Institution;
-import org.jankowskirafal.oddam_w_dobre_rece.institutions.InstitutionService;
-import org.jankowskirafal.oddam_w_dobre_rece.users.User;
-import org.jankowskirafal.oddam_w_dobre_rece.users.UserService;
+import org.jankowskirafal.oddamwdobrerece.categories.Category;
+import org.jankowskirafal.oddamwdobrerece.categories.CategoryService;
+import org.jankowskirafal.oddamwdobrerece.categories.CategoryType;
+import org.jankowskirafal.oddamwdobrerece.donations.Donation;
+import org.jankowskirafal.oddamwdobrerece.donations.DonationService;
+import org.jankowskirafal.oddamwdobrerece.institutions.Institution;
+import org.jankowskirafal.oddamwdobrerece.institutions.InstitutionService;
+import org.jankowskirafal.oddamwdobrerece.users.User;
+import org.jankowskirafal.oddamwdobrerece.users.UserService;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -120,11 +120,21 @@ public class TestDataLoader {
         institution4.setName("Bez domu");
         institution4.setDescription("Pomoc dla osob nie posiadajacych miejsca zamieszkania");
 
+        Institution institution5 = new Institution();
+        institution5.setName("Test institution");
+        institution5.setDescription("Test institution description");
+
+        Institution institution6 = new Institution();
+        institution6.setName("Test institution2");
+        institution6.setDescription("Test institution description2");
+
 
         institutionService.addInstitution(institution1);
         institutionService.addInstitution(institution2);
         institutionService.addInstitution(institution3);
         institutionService.addInstitution(institution4);
+        institutionService.addInstitution(institution5);
+        institutionService.addInstitution(institution6);
     }
 
     @Transactional
@@ -139,7 +149,7 @@ public class TestDataLoader {
 
             donation.setQuantity(random.nextInt(10) + 1);
 
-            Set<Category> donationCategories = new HashSet<>();
+            List<Category> donationCategories = new ArrayList<>();
             int numCategories = random.nextInt(3) + 1;
 
             for (int j = 0; j < numCategories; j++) {
