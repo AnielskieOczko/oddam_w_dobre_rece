@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jankowskirafal.oddamwdobrerece.categories.Category;
 import org.jankowskirafal.oddamwdobrerece.categories.CategoryService;
-import org.jankowskirafal.oddamwdobrerece.categories.CategoryType;
 import org.jankowskirafal.oddamwdobrerece.donations.Donation;
 import org.jankowskirafal.oddamwdobrerece.donations.DonationService;
 import org.jankowskirafal.oddamwdobrerece.institutions.Institution;
@@ -90,10 +89,10 @@ public class TestDataLoader {
     }
 
     private void loadCategories() {
-        List<CategoryType> categoryTypes = List.of(
-                CategoryType.BOOKS,
-                CategoryType.CLOTHING,
-                CategoryType.FOOD);
+        List<String> categoryTypes = List.of(
+                "ksiazki",
+                "ubrania",
+                "zabawki");
 
         categoryTypes.forEach(categoryType -> {
             Category category = new Category();
