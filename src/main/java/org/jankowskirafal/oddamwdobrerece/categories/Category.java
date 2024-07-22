@@ -16,7 +16,6 @@ public class Category {
     @GeneratedValue
     Long categoryId;
 
-    @Enumerated(EnumType.STRING)
-    CategoryType name;
+    String name;
 }
 
