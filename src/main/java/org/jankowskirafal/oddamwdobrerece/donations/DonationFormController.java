@@ -46,6 +46,7 @@ public class DonationFormController {
         log.info("Received donation form data: {}", addDonationFormDto);
 
         model.addAttribute("donationForm", addDonationFormDto);
+        donationService.createDonation(addDonationFormDto.donation());
 
         return "form-confirmation-default";
     }

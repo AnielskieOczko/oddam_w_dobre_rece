@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     /**
      * Form Select
      */
@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function() {
     /**
      * Hide elements when clicked on document
      */
-    document.addEventListener("click", function(e) {
+    document.addEventListener("click", function (e) {
         const target = e.target;
         const tagName = target.tagName;
 
@@ -118,11 +118,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // Attach event listeners for summary updates (only once)
             document.querySelectorAll('input[name="categories"], input[name="donation.quantity"]').forEach(input => {
-                input.addEventListener('change', this.updateQuantity.bind(this));
+                input.addEventListener('change', this.updateDonationSummary.bind(this));
             });
 
             // Attach event listeners for summary updates (only once)
-            document.querySelectorAll('input[name="categories"], input[name="donation.quantity"]').forEach(input => {
+            document.querySelectorAll('input[name="categories"], input[name="donation.categories"]').forEach(input => {
                 input.addEventListener('change', this.updateDonationSummary.bind(this));
             });
 
@@ -131,10 +131,22 @@ document.addEventListener("DOMContentLoaded", function() {
             });
 
             document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
+                checkbox.addEventListener('change', function () {
                     console.log('Checkbox changed:', this.checked, 'Value:', this.value);
                     // Force update of visual state
                     this.nextElementSibling.classList.toggle('checked', this.checked);
+                    console.log(document.querySelectorAll('span[class="checkbox checkbox-custom"]'));
+
+                    const selectedCategoryNames = Array.from(document.querySelectorAll('input[name="donation.categories"]:checked'))
+                        .map(checkbox => {
+                            // Find the closest ancestor with class 'form-group--checkbox'
+                            const checkboxGroup = checkbox.closest('.form-group--checkbox');
+                            // Find the description span within that checkbox group
+                            const descriptionSpan = checkboxGroup.querySelector('.description');
+                            return descriptionSpan.textContent;
+                        });
+
+                    console.log("Selected Category Names:", selectedCategoryNames);
                 });
             });
         }
@@ -208,14 +220,30 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         updateDonationSummary() {
-            const selectedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked'))
-                .map(checkbox => checkbox.parentElement.nextElementSibling.textContent);
-            console.log("selectedCategories: " + selectedCategories)
+
+            // Clear the existing content
+            document.getElementById('donationSummary').textContent = '';
+
+            this.updateQuantity(); // Assuming this updates the quantity text correctly
             const quantitySummary = document.getElementById('donationSummary').textContent;
+
+            const selectedCategoryNames = Array.from(document.querySelectorAll('input[name="donation.categories"]:checked'))
+                .map(checkbox => {
+                    // Find the closest ancestor with class 'form-group--checkbox'
+                    const checkboxGroup = checkbox.closest('.form-group--checkbox');
+                    // Find the description span within that checkbox group
+                    const descriptionSpan = checkboxGroup.querySelector('.description');
+                    return descriptionSpan.textContent;
+                });
+            console.log("Selected Category Names:", selectedCategoryNames);
+
             console.log("quantitySummary: " + quantitySummary)
-            const summaryText = quantitySummary ? `${quantitySummary} ${selectedCategories.join(', ')}` : '';
-            document.getElementById('donationSummary').textContent = summaryText;
+
+            const summaryText = quantitySummary
+                ? `${quantitySummary}${selectedCategoryNames.length > 0 ? ' ' + selectedCategoryNames.join(', ') : ''}`
+                : '';
             console.log("summary text: " + summaryText)
+            document.getElementById('donationSummary').textContent = summaryText;
         }
 
         updateOrganizationSummary() {
