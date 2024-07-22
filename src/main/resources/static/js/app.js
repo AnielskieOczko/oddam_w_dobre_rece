@@ -129,6 +129,14 @@ document.addEventListener("DOMContentLoaded", function() {
             document.querySelectorAll('input[type="radio"][name="donation.institution"]').forEach(input => {
                 input.addEventListener('change', this.updateOrganizationSummary.bind(this));
             });
+
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    console.log('Checkbox changed:', this.checked, 'Value:', this.value);
+                    // Force update of visual state
+                    this.nextElementSibling.classList.toggle('checked', this.checked);
+                });
+            });
         }
 
         /**
@@ -152,8 +160,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     this.updateForm();
                 });
             });
-
-            // No need for a form submit event listener here
         }
 
         /**

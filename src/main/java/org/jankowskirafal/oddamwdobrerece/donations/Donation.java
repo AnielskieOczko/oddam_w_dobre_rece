@@ -8,6 +8,7 @@ import org.jankowskirafal.oddamwdobrerece.users.User;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -31,7 +32,7 @@ public class Donation {
             joinColumns = @JoinColumn(name = "donation_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
-    List<Category> categories;
+    List<Category> categories = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institutionId", nullable = false)
