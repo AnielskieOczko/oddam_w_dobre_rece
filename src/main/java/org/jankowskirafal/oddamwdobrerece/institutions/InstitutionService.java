@@ -1,4 +1,4 @@
-package org.jankowskirafal.oddam_w_dobre_rece.institutions;
+package org.jankowskirafal.oddamwdobrerece.institutions;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;

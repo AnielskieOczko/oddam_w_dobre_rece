@@ -1,4 +1,4 @@
-package org.jankowskirafal.oddam_w_dobre_rece.institutions;
+package org.jankowskirafal.oddamwdobrerece.institutions;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

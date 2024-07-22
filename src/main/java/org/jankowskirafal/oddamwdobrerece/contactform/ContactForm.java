@@ -1,4 +1,4 @@
-package org.jankowskirafal.oddam_w_dobre_rece.institutions;
+package org.jankowskirafal.oddamwdobrerece.contactform;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,19 +10,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "institutions")
+@Table(name = "contact_form_messages")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Institution {
+public class ContactForm {
 
     @Id
     @GeneratedValue
-    private Long institutionId;
+    Long id;
 
     String name;
-
-    String description;
-
+    String surname;
+    String message;
 }

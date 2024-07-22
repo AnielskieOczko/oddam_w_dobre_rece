@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+
     /**
      * Form Select
      */
@@ -115,40 +116,6 @@ document.addEventListener("DOMContentLoaded", function () {
         init() {
             this.events();
             this.updateForm();
-
-            // Attach event listeners for summary updates (only once)
-            document.querySelectorAll('input[name="categories"], input[name="donation.quantity"]').forEach(input => {
-                input.addEventListener('change', this.updateDonationSummary.bind(this));
-            });
-
-            // Attach event listeners for summary updates (only once)
-            document.querySelectorAll('input[name="categories"], input[name="donation.categories"]').forEach(input => {
-                input.addEventListener('change', this.updateDonationSummary.bind(this));
-            });
-
-            document.querySelectorAll('input[type="radio"][name="donation.institution"]').forEach(input => {
-                input.addEventListener('change', this.updateOrganizationSummary.bind(this));
-            });
-
-            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                checkbox.addEventListener('change', function () {
-                    console.log('Checkbox changed:', this.checked, 'Value:', this.value);
-                    // Force update of visual state
-                    this.nextElementSibling.classList.toggle('checked', this.checked);
-                    console.log(document.querySelectorAll('span[class="checkbox checkbox-custom"]'));
-
-                    const selectedCategoryNames = Array.from(document.querySelectorAll('input[name="donation.categories"]:checked'))
-                        .map(checkbox => {
-                            // Find the closest ancestor with class 'form-group--checkbox'
-                            const checkboxGroup = checkbox.closest('.form-group--checkbox');
-                            // Find the description span within that checkbox group
-                            const descriptionSpan = checkboxGroup.querySelector('.description');
-                            return descriptionSpan.textContent;
-                        });
-
-                    console.log("Selected Category Names:", selectedCategoryNames);
-                });
-            });
         }
 
         /**
@@ -172,6 +139,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     this.updateForm();
                 });
             });
+
+            // Form submit
+            // this.$form.querySelector("form").addEventListener("submit", e => this.submit(e));
         }
 
         /**
@@ -194,15 +164,41 @@ document.addEventListener("DOMContentLoaded", function () {
             this.$stepInstructions[0].parentElement.parentElement.hidden = this.currentStep >= 5;
             this.$step.parentElement.hidden = this.currentStep >= 5;
 
+
+            // Set up address input listeners when step 4 becomes active
             if (this.currentStep === 4) {
                 this.setupAddressListeners();
             }
+
+            // Update donation summary ONLY when step 1 is active (adjust step number if needed)
+            if (this.currentStep === 1) {
+                this.updateDonationSummary();
+            }
+
+            // Update organization summary ONLY when step 3 is active (adjust step number if needed)
+            if (this.currentStep === 3) {
+                this.updateOrganizationSummary();
+            }
+            if (this.currentStep === 2) {
+                this.updateQuantity();
+            }
+
+            document.querySelectorAll('input[name="categories"], input[name="bags"]').forEach(input => {
+                input.addEventListener('change', this.updateDonationSummary.bind(this)); // Use bind(this)!
+            });
+
+            document.querySelectorAll('input[type="radio"][name="donation.institution"]').forEach(input => {
+                input.addEventListener('change', this.updateOrganizationSummary.bind(this));
+            });
+
+            document.querySelectorAll('input[type="number"][name="donation.quantity"]').forEach(input => {
+                input.addEventListener('change', this.updateQuantity.bind(this));
+            });
         }
 
         setupAddressListeners() {
-            const addressInputsContainer = document.querySelector('.form-section--columns'); // Assuming this is your container
-            const addressInputs = addressInputsContainer.querySelectorAll(
-                'input[name="donation.street"], input[name="donation.city"], input[name="donation.zip"], input[name="donation.phone"], input[name="donation.pickUpDate"], input[name="donation.pickUpTime"], textarea[name="donation.pickUpComment"]'
+            const addressInputs = this.$form.querySelectorAll(
+                'input[name="street"], input[name="city"], input[name="postcode"], input[name="phone"], input[name="date"], input[name="time"], textarea[name="more_info"]'
             );
 
             console.log(addressInputs); // Check if elements are selected
@@ -213,54 +209,48 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
 
+
         updateQuantity() {
+            const selectedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked'))
+                .map(checkbox => checkbox.parentElement.nextElementSibling.textContent);
             const quantity = document.querySelector('input[name="donation.quantity"]').value || 0;
-            const quantitySummary = quantity > 0 ? `${quantity} ${quantity > 1 ? 'worki' : 'worek'}` : '';
-            document.getElementById('donationSummary').textContent = quantitySummary;
-        }
+            console.log(quantity)
 
-        updateDonationSummary() {
-
-            // Clear the existing content
-            document.getElementById('donationSummary').textContent = '';
-
-            this.updateQuantity(); // Assuming this updates the quantity text correctly
-            const quantitySummary = document.getElementById('donationSummary').textContent;
-
-            const selectedCategoryNames = Array.from(document.querySelectorAll('input[name="donation.categories"]:checked'))
-                .map(checkbox => {
-                    // Find the closest ancestor with class 'form-group--checkbox'
-                    const checkboxGroup = checkbox.closest('.form-group--checkbox');
-                    // Find the description span within that checkbox group
-                    const descriptionSpan = checkboxGroup.querySelector('.description');
-                    return descriptionSpan.textContent;
-                });
-            console.log("Selected Category Names:", selectedCategoryNames);
-
-            console.log("quantitySummary: " + quantitySummary)
-
-            const summaryText = quantitySummary
-                ? `${quantitySummary}${selectedCategoryNames.length > 0 ? ' ' + selectedCategoryNames.join(', ') : ''}`
+            const summaryText = quantity > 0
+                ? `${quantity} ${quantity > 1 ? 'worki' : 'worek'} ${selectedCategories.join(', ')}`
                 : '';
-            console.log("summary text: " + summaryText)
+            console.log(summaryText)
             document.getElementById('donationSummary').textContent = summaryText;
         }
 
+        updateDonationSummary() {
+            const selectedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked'))
+                .map(checkbox => checkbox.parentElement.nextElementSibling.textContent);
+        }
+
         updateOrganizationSummary() {
+            // Select the checked radio button using its type and checked state
             const selectedOrganization = document.querySelector('input[type="radio"][name="donation.institution"]:checked');
+            console.log("Selected Organization Element:", selectedOrganization); // Check if selected correctly
+
+            // Get the title text from the parent label element
             const organizationSummary = selectedOrganization
                 ? selectedOrganization.closest('label').querySelector('.title').textContent
                 : '';
+            console.log("Organization Summary Text:", organizationSummary); // Check extracted text
+
             document.getElementById('organizationSummary').textContent = `Dla ${organizationSummary}`;
         }
 
+
+
+
         updateDonationDelivery() {
             const updateField = (inputName, summaryId) => {
-                const addressInputsContainer = document.querySelector('.form-section--columns');
-                let inputElement = addressInputsContainer.querySelector(`input[name="${inputName}"]`);
+                let inputElement = this.$form.querySelector(`input[name="${inputName}"]`);
 
                 if (!inputElement) {
-                    inputElement = addressInputsContainer.querySelector(`textarea[name="${inputName}"]`);
+                    inputElement = this.$form.querySelector(`textarea[name="${inputName}"]`);
                 }
 
                 if (inputElement) {
@@ -278,16 +268,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             };
 
-            // Update all summary fields (make sure input names are consistent)
+            // Update all summary fields
             updateField('donation.street', 'streetSummary');
             updateField('donation.city', 'citySummary');
             updateField('donation.zip', 'zipSummary');
             updateField('donation.phone', 'phoneSummary');
 
-            updateField('donation.pickUpDate', 'pickUpDateSummary');
-            updateField('donation.pickUpTime', 'pickUpTimeSummary');
-            updateField('donation.pickUpComment', 'pickUpCommentSummary');
+            updateField('donation.date', 'pickUpDateSummary');
+            updateField('donation.time', 'pickUpTimeSummary');
+            updateField('donation.more_info', 'pickUpCommentSummary');
         }
+
     }
 
     const form = document.querySelector(".form--steps");

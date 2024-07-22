@@ -1,4 +1,4 @@
-package org.jankowskirafal.oddam_w_dobre_rece;
+package org.jankowskirafal.oddamwdobrerece;
 
 import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Configuration;

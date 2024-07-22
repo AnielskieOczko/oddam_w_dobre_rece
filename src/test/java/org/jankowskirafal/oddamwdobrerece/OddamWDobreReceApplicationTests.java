@@ -1,4 +1,4 @@
-package org.jankowskirafal.oddam_w_dobre_rece;
+package org.jankowskirafal.oddamwdobrerece;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

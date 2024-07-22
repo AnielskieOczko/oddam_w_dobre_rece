@@ -1,16 +1,15 @@
-package org.jankowskirafal.oddam_w_dobre_rece.donations;
+package org.jankowskirafal.oddamwdobrerece.donations;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.jankowskirafal.oddam_w_dobre_rece.categories.Category;
-import org.jankowskirafal.oddam_w_dobre_rece.institutions.Institution;
-import org.jankowskirafal.oddam_w_dobre_rece.users.User;
+import lombok.*;
+import org.jankowskirafal.oddamwdobrerece.categories.Category;
+import org.jankowskirafal.oddamwdobrerece.institutions.Institution;
+import org.jankowskirafal.oddamwdobrerece.users.User;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -19,6 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class Donation {
     @Id
     @GeneratedValue
@@ -32,7 +32,7 @@ public class Donation {
             joinColumns = @JoinColumn(name = "donation_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
-    Set<Category> categories;
+    List<Category> categories = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institutionId", nullable = false)
@@ -45,6 +45,7 @@ public class Donation {
     String street;
     String city;
     String zip;
+    String phone;
     LocalDate pickUpDate;
     LocalTime pickUpTime;
     String pickUpComment;
