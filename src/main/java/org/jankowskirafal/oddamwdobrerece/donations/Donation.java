@@ -1,6 +1,10 @@
 package org.jankowskirafal.oddamwdobrerece.donations;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.jankowskirafal.oddamwdobrerece.categories.Category;
 import org.jankowskirafal.oddamwdobrerece.institutions.Institution;
@@ -24,8 +28,11 @@ public class Donation {
     @GeneratedValue
     private Long donationId;
 
+    @NotNull(message = "Quantity is required")
+    @Min(value = 1, message = "Quantity must be at least 1")
     Integer quantity;
 
+//    @NotEmpty(message = "Please select at least one category")
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
             name = "donations_categories",
@@ -42,6 +49,7 @@ public class Donation {
     @JoinColumn(name = "user_id")
     private User user;
 
+//    @NotBlank(message = "Street is required")
     String street;
     String city;
     String zip;
