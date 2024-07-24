@@ -81,22 +81,22 @@
     <div class="form--steps-container">
         <div class="form--steps-counter">Krok <span>1</span>/4</div>
 
-        <form th:action="@{/donations/form-confirmation}" method="post" th:object="${donationForm}">
-            <!-- STEP 1: class .active is switching steps -->
-            <div data-step="1" class="active">
-                <h3>Zaznacz co chcesz oddać:</h3>
+                <form th:action="@{/donations/form-confirmation}" method="post" th:object="${donationForm}">
+                    <!-- STEP 1: class .active is switching steps -->
+                    <div data-step="1" class="active">
+                        <h3>Zaznacz co chcesz oddać:</h3>
 
-                <div class="form-group form-group--checkbox" th:each="category : *{categories}">
-                    <label>
-                        <input type="checkbox"
-                               name="categories"
-                               th:value="${category.categoryId}"
-                               th:field="*{donation.categories}"
-                        />
-                        <span class="checkbox checkbox-custom"></span>
-                        <span class="description" th:text="${category.name}"></span>
-                    </label>
-                </div>
+                        <div class="form-group form-group--checkbox" th:each="category : *{categories}">
+                            <label>
+                                <input type="checkbox"
+                                       name="categories"
+                                       th:value="${category.categoryId}"
+                                       th:field="*{donation.categories}"
+                                />
+                                <span class="checkbox checkbox-custom"></span>
+                                <span class="description" th:text="${category.name}"></span>
+                            </label>
+                        </div>
 
                 <div class="form-group form-group--buttons">
                     <button type="button" class="btn next-step">Dalej</button>
@@ -107,12 +107,15 @@
             <div data-step="2">
                 <h3>Podaj liczbę 60l worków, w które spakowałeś/aś rzeczy:</h3>
 
-                <div class="form-group form-group--inline">
+                <div class="form-group form-group--inline" th:classappend="${#fields.hasErrors('donation.quantity')} ? 'has-error'">
                     <label>
                         Liczba 60l worków:
                         <input type="number" name="bags" step="1" min="1"
                                th:field="*{donation.quantity}"
                         />
+                        <span th:if="${#fields.hasErrors('donation.quantity')}"
+                              th:errors="*{donation.quantity}"
+                              class="error-message"></span>
                     </label>
                 </div>
 
@@ -256,29 +259,29 @@
 </section>
 
 <footer>
-    <div class="contact">
-        <h2>Skontaktuj się z nami</h2>
-        <h3>Formularz kontaktowy</h3>
-        <form class="form--contact">
-            <div class="form-group form-group--50">
-                <input type="text" name="name" placeholder="Imię" th:field="*{donationForm.contactForm.name}"/>
-            </div>
-            <div class="form-group form-group--50">
-                <input type="text" name="surname" placeholder="Nazwisko"
-                       th:field="*{donationForm.contactForm.surname}"/>
-            </div>
+<!--    <div class="contact">-->
+<!--        <h2>Skontaktuj się z nami</h2>-->
+<!--        <h3>Formularz kontaktowy</h3>-->
+<!--        <form class="form&#45;&#45;contact">-->
+<!--            <div class="form-group form-group&#45;&#45;50">-->
+<!--                <input type="text" name="name" placeholder="Imię" th:field="*{donationForm.contactForm.name}"/>-->
+<!--            </div>-->
+<!--            <div class="form-group form-group&#45;&#45;50">-->
+<!--                <input type="text" name="surname" placeholder="Nazwisko"-->
+<!--                       th:field="*{donationForm.contactForm.surname}"/>-->
+<!--            </div>-->
 
-            <div class="form-group">
-            <textarea
-                    name="message"
-                    placeholder="Wiadomość"
-                    rows="1" th:field="*{donationForm.contactForm.message}"
-            ></textarea>
-            </div>
+<!--            <div class="form-group">-->
+<!--            <textarea-->
+<!--                    name="message"-->
+<!--                    placeholder="Wiadomość"-->
+<!--                    rows="1" th:field="*{donationForm.contactForm.message}"-->
+<!--            ></textarea>-->
+<!--            </div>-->
 
-            <button class="btn" type="submit">Wyślij</button>
-        </form>
-    </div>
+<!--            <button class="btn" type="submit">Wyślij</button>-->
+<!--        </form>-->
+<!--    </div>-->
     <div class="bottom-line">
         <span class="bottom-line--copy">Copyright &copy; 2018</span>
         <div class="bottom-line--icons">
