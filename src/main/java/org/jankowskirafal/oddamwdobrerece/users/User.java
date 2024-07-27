@@ -27,6 +27,17 @@ public class User {
     private String email;
     private String password;
 
+    @ManyToMany(fetch = FetchType.EAGER) // Load authorities eagerly
+    @JoinTable(
+            name = "users_authorities", // Name of the join table
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "authority_id")
+    )
+    private Set<Authority> authorities = new HashSet<>();
+
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive = true; // Set default to true (active)
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Donation> donations = new HashSet<>();
 
