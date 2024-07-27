@@ -7,4 +7,5 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @Transactional
 public class AppConfig implements WebMvcConfigurer {
+
 }
