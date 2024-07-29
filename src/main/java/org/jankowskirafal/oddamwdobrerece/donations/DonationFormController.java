@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jankowskirafal.oddamwdobrerece.categories.CategoryService;
 import org.jankowskirafal.oddamwdobrerece.contactform.ContactForm;
 import org.jankowskirafal.oddamwdobrerece.dtos.AddDonationFormDto;
-import org.jankowskirafal.oddamwdobrerece.institutions.InstitutionService;
+import org.jankowskirafal.oddamwdobrerece.institutions.InstitutionServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +21,7 @@ public class DonationFormController {
 
     private final DonationService donationService;
     private final CategoryService categoryService;
-    private final InstitutionService institutionService;
+    private final InstitutionServiceImpl institutionServiceImpl;
 
 
     @GetMapping("/add")
@@ -29,7 +29,7 @@ public class DonationFormController {
 
         AddDonationFormDto addDonationFormDto = new AddDonationFormDto(
                 categoryService.getAllCategories(),
-                institutionService.getAll(),
+                institutionServiceImpl.getAll(),
                 new Donation(),
                 new ContactForm()
         );

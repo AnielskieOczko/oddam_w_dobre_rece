@@ -1,0 +1,28 @@
+<div th:fragment="content">
+  <div class="action-bar">
+    <input type="text" placeholder="Szukaj fundacji..." class="search-input"/>
+    <a href="/admin/institutions/add" class="btn btn-add">Dodaj Fundację</a>
+  </div>
+
+  <table class="admin-table">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nazwa</th>
+      <th>Opis</th>
+      <th>Akcje</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="institution : ${institutions}">
+      <td th:text="${institution.id}"></td>
+      <td th:text="${institution.name}"></td>
+      <td th:text="${institution.description}"></td>
+      <td>
+        <a th:href="@{/admin/institutions/edit/{id}(id=${institution.id})}" class="btn btn-edit">Edytuj</a>
+        <a th:href="@{/admin/institutions/delete/{id}(id=${institution.id})}" class="btn btn-delete">Usuń</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

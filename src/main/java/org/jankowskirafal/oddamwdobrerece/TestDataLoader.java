@@ -9,6 +9,9 @@ import org.jankowskirafal.oddamwdobrerece.donations.Donation;
 import org.jankowskirafal.oddamwdobrerece.donations.DonationService;
 import org.jankowskirafal.oddamwdobrerece.institutions.Institution;
 import org.jankowskirafal.oddamwdobrerece.institutions.InstitutionService;
+import org.jankowskirafal.oddamwdobrerece.institutions.InstitutionServiceImpl;
+import org.jankowskirafal.oddamwdobrerece.users.Authority;
+import org.jankowskirafal.oddamwdobrerece.users.AuthorityService;
 import org.jankowskirafal.oddamwdobrerece.users.User;
 import org.jankowskirafal.oddamwdobrerece.users.UserService;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -30,6 +33,7 @@ public class TestDataLoader {
     private final CategoryService categoryService;
     private final DonationService donationService;
     private final UserService userService;
+    private final AuthorityService authorityService;
 
     private static final Random random = new Random();
 
@@ -56,6 +60,9 @@ public class TestDataLoader {
 
         log.info("Starting up");
 
+        log.info("Loading authorities");
+        loadAuthorities();
+
         log.info("Loading users");
         loadUsers();
 
@@ -72,6 +79,19 @@ public class TestDataLoader {
 
     }
 
+    private void loadAuthorities() {
+        Authority authority = new Authority();
+        authority.setName("ROLE_USER");
+
+        Authority authority1 =  new Authority();
+        authority1.setName("ROLE_ADMIN");
+
+        authorityService.addNewAuthority(authority);
+        authorityService.addNewAuthority(authority1);
+
+
+    }
+
     private void loadUsers() {
 
         User user = new User();
@@ -82,8 +102,11 @@ public class TestDataLoader {
         user1.setEmail("testUser1@gmail.com");
         user1.setPassword("password1");
 
-        userService.addUser(user);
-        userService.addUser(user1);
+        List<String> roles = List.of("ROLE_USER");
+        List<String> roles1 = List.of("ROLE_USER", "ROLE_ADMIN");
+
+        userService.createUser(user, roles);
+        userService.createUser(user1, roles1);
 
 
     }
@@ -128,12 +151,12 @@ public class TestDataLoader {
         institution6.setDescription("Test institution description2");
 
 
-        institutionService.addInstitution(institution1);
-        institutionService.addInstitution(institution2);
-        institutionService.addInstitution(institution3);
-        institutionService.addInstitution(institution4);
-        institutionService.addInstitution(institution5);
-        institutionService.addInstitution(institution6);
+        institutionService.saveInstitution(institution1);
+        institutionService.saveInstitution(institution2);
+        institutionService.saveInstitution(institution3);
+        institutionService.saveInstitution(institution4);
+        institutionService.saveInstitution(institution5);
+        institutionService.saveInstitution(institution6);
     }
 
     @Transactional

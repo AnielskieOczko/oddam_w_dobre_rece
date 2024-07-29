@@ -19,8 +19,8 @@ public class Institution {
     @GeneratedValue
     private Long institutionId;
 
-    String name;
+    private String name;
 
-    String description;
+    private String description;
 
 }
