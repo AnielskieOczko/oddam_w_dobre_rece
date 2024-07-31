@@ -102,8 +102,10 @@ public class TestDataLoader {
         user1.setEmail("testUser1@gmail.com");
         user1.setPassword("password1");
 
-        List<String> roles = List.of("ROLE_USER");
-        List<String> roles1 = List.of("ROLE_USER", "ROLE_ADMIN");
+        Set<String> roles = Set.of("ROLE_USER");
+        Set<String> roles1 = Set.of("ROLE_USER", "ROLE_ADMIN");
+
+
 
         userService.createUser(user, roles);
         userService.createUser(user1, roles1);

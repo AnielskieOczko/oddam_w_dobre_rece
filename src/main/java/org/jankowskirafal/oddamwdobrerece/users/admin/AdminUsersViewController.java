@@ -2,8 +2,6 @@ package org.jankowskirafal.oddamwdobrerece.users.admin;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.jankowskirafal.oddamwdobrerece.institutions.Institution;
-import org.jankowskirafal.oddamwdobrerece.institutions.InstitutionService;
 import org.jankowskirafal.oddamwdobrerece.users.*;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -18,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @AllArgsConstructor
@@ -79,14 +78,16 @@ public class AdminUsersViewController {
             return "admin-user-form";
         }
 
-        Set<Authority> authorities = new HashSet<>();
-        for (Authority authority : user.getAuthorities()) {
-            authorities.add(authorityService.findAuthorityByRoleName(authority.getName())
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid authority name: " + authority.getName())));
-        }
-        user.setAuthorities(authorities);
+        // Extract role names from the selected authorities
+        Set<String> roleNames = user.getAuthorities().stream()
+                .map(Authority::getName)
+                .collect(Collectors.toSet());
 
-        userService.saveUser(user);
+        if (user.getId() == null) {
+            userService.createUser(user, roleNames);
+        } else {
+            userService.updateUser(user, roleNames);
+        }
 
         return "redirect:/admin/users";
     }

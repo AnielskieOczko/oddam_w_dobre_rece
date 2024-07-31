@@ -1,5 +1,6 @@
 package org.jankowskirafal.oddamwdobrerece.users;
 
+import jakarta.transaction.Transactional;
 import org.jankowskirafal.oddamwdobrerece.institutions.Institution;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -29,5 +31,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
                     @Param("email") String email,
                     @Param("password") String password,
                     @Param("isActive") boolean isActive);
+
+    @Modifying
+    @Query("DELETE FROM UserAuthority ua WHERE ua.user.id = :userId")
+    void deleteUserAuthorities(@Param("userId") Long userId);
+
+    @Modifying
+    @Transactional
+    @Query("INSERT INTO UserAuthority (user, authority) " +
+            "SELECT u, a FROM User u, Authority a " +
+            "WHERE u.id = :userId AND a.name IN (:authorityNames)") // Correct entity name
+    void insertUserAuthorities(@Param("userId") Long userId, @Param("authorityNames") Set<String> authorityNames);
 
 }

@@ -38,7 +38,7 @@ public class User {
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true; // Set default to true (active)
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user")
     private Set<Donation> donations = new HashSet<>();
 
 
