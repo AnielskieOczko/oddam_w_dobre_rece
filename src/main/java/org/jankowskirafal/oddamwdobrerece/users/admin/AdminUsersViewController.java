@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -20,14 +19,15 @@ import java.util.stream.Collectors;
 
 @Controller
 @AllArgsConstructor
-@RequestMapping("/admin/users")
+@RequestMapping("/admin")
 public class AdminUsersViewController {
 
     private final AuthorityService authorityService;
     private final UserService userService;
     private final String ROLE_USER = "ROLE_USER";
+    private final String ROLE_ADMIN = "ROLE_ADMIN";
 
-    @GetMapping
+    @GetMapping("/users")
     public String listUsers(Model model,
                             @RequestParam(defaultValue = "0") int page,
                             @RequestParam(defaultValue = "10") int size,
@@ -40,18 +40,32 @@ public class AdminUsersViewController {
         return "users-list";
     }
 
-    @GetMapping("/add")
+    @GetMapping("/admins")
+    public String adminUsers(Model model,
+                            @RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "10") int size,
+                            @RequestParam(required = false) String search) {
+
+        Page<User> usersPage = userService.getAllUsersByRoleName(page, size, ROLE_ADMIN);
+        model.addAttribute("admins", usersPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("search", search);
+        return "admins-list";
+    }
+
+
+    @GetMapping({"/users/add", "/admins/add"})
     public String displayAddUserForm(Model model) {
         User user = new User();
         List<Authority> allAuthorities = authorityService.getAllAuthorities();
-
-
         model.addAttribute("user", user);
         model.addAttribute("allAuthorieties", allAuthorities);
         return "admin-user-form";
     }
 
-    @GetMapping("/edit/{id}")
+
+
+    @GetMapping({"/users/edit/{id}", "/admins/edit/{id}"})
     public String showEditInstitutionForm(@PathVariable Long id, Model model) {
 
         List<Authority> allAuthorities = authorityService.getAllAuthorities();
@@ -68,7 +82,7 @@ public class AdminUsersViewController {
         return "admin-user-form";
     }
 
-    @PostMapping("/save")
+    @PostMapping({"/users/save", "/admins/save"})
     public String saveUser(@ModelAttribute("user") @Valid User user,
                            BindingResult bindingResult,
                            Model model) {
@@ -93,7 +107,7 @@ public class AdminUsersViewController {
     }
 
 
-    @PostMapping("/delete/{id}")
+    @PostMapping({"users/delete/{id}", "admins/delete/{id}"})
     public String deleteInstitution(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         userService.deleteUserById(id);
         redirectAttributes.addFlashAttribute("message", "Użytkownik został usunięty.");
