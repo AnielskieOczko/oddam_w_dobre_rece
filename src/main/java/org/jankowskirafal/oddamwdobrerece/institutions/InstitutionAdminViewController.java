@@ -1,9 +1,7 @@
-package org.jankowskirafal.oddamwdobrerece.institutions.admin;
+package org.jankowskirafal.oddamwdobrerece.institutions;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.jankowskirafal.oddamwdobrerece.institutions.Institution;
-import org.jankowskirafal.oddamwdobrerece.institutions.InstitutionService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;

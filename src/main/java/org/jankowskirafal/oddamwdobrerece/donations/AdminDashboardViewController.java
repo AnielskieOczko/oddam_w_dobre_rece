@@ -1,10 +1,7 @@
-package org.jankowskirafal.oddamwdobrerece.donations.admin;
+package org.jankowskirafal.oddamwdobrerece.donations;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.jankowskirafal.oddamwdobrerece.donations.Donation;
-import org.jankowskirafal.oddamwdobrerece.donations.DonationService;
-import org.jankowskirafal.oddamwdobrerece.institutions.Institution;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -19,7 +16,7 @@ import java.util.Optional;
 @Controller
 @AllArgsConstructor
 @RequestMapping("/admin/donations")
-public class AdminDashboardView {
+public class AdminDashboardViewController {
 
     private final DonationService donationService;
 

@@ -70,7 +70,7 @@
 
 <div class="container">
     <h2>Add/Edit User</h2>
-    <form th:action="@{/admin/users/save}" method="post" th:object="${user}">
+    <form th:action="@{/admin/admins/save}" method="post" th:object="${user}">
         <input type="hidden" th:field="*{id}">
 
         <div class="form-group" th:classappend="${#fields.hasErrors('email')} ? 'has-error'">
@@ -88,7 +88,7 @@
         <div class="form-group">
             <label for="authorities">Roles:</label>
             <select id="authorities" multiple="multiple" th:field="${user.authorities}">
-                <option th:each="authority : ${allAuthorieties}"
+                <option th:each="authority : ${allAuthorities}"
                         th:value="${authority.name}"
                         th:text="${authority.name}">
                 </option>
@@ -100,7 +100,7 @@
             <input type="checkbox" th:field="*{active}" id="isActive">
         </div>
 
-        <button type="submit">Save User</button>
+        <button type="submit">Save</button>
     </form>
 </div>
 

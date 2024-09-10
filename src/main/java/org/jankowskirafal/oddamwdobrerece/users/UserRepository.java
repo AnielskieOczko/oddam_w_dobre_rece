@@ -17,30 +17,12 @@ import java.util.Set;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
+    @Transactional
     Optional<User> findUserByEmail(String email);
 
-
+    @Transactional
     @Query("SELECT u FROM User u JOIN u.authorities a WHERE a.name = :roleName ORDER BY u.email ASC")
     Page<User> findByRoleName(@Param("roleName") String roleName, Pageable pageable);
 
-    @Modifying
-    @Query("UPDATE User u " +
-            "SET u.email = :email, u.password = :password, u.isActive = :isActive " +
-            "WHERE u.id = :userId")
-    void updateUser(@Param("userId") Long userId,
-                    @Param("email") String email,
-                    @Param("password") String password,
-                    @Param("isActive") boolean isActive);
-
-    @Modifying
-    @Query("DELETE FROM UserAuthority ua WHERE ua.user.id = :userId")
-    void deleteUserAuthorities(@Param("userId") Long userId);
-
-    @Modifying
-    @Transactional
-    @Query("INSERT INTO UserAuthority (user, authority) " +
-            "SELECT u, a FROM User u, Authority a " +
-            "WHERE u.id = :userId AND a.name IN (:authorityNames)") // Correct entity name
-    void insertUserAuthorities(@Param("userId") Long userId, @Param("authorityNames") Set<String> authorityNames);
 
 }
