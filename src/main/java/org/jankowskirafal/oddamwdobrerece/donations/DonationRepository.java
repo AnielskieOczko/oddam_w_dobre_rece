@@ -42,5 +42,15 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
             @Param("institution") Institution institution,
             @Param("user") User user);
 
+    @Query("SELECT d FROM Donation d " +
+            "LEFT JOIN d.user u " +
+            "LEFT JOIN d.institution i " +
+            "WHERE lower(d.street) LIKE lower(concat('%', :search, '%')) " +
+            "OR lower(d.city) LIKE lower(concat('%', :search, '%')) " +
+            "OR lower(d.zip) LIKE lower(concat('%', :search, '%')) " +
+            "OR lower(u.email) LIKE lower(concat('%', :search, '%')) " +
+            "OR lower(i.name) LIKE lower(concat('%', :search, '%'))")
+    Page<Donation> searchDonations(@Param("search") String searchTerm, Pageable pageable);
+
 
 }

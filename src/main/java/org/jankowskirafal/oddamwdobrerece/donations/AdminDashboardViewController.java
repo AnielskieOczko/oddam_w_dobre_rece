@@ -29,7 +29,7 @@ public class AdminDashboardViewController {
     public String listInstitutions(Model model,
                                    @RequestParam(defaultValue = "1") int page, // Default to page 1
                                    @RequestParam(defaultValue = "10") int size,
-                                   @RequestParam(required = false) String search) {
+                                   @RequestParam(required = false, defaultValue = "") String search) {
 
         Page<Donation> donationPage = donationService.getAllDonations(page - 1, size, search); // Adjust page number
         model.addAttribute("donations", donationPage.getContent());

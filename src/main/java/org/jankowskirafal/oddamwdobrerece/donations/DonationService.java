@@ -69,7 +69,12 @@ public class DonationService {
 
     public Page<Donation> getAllDonations(int page, int size, String search) {
         Pageable pageable = PageRequest.of(page, size);
-        return donationRepository.findAll(pageable);
+
+        if (search.trim().isBlank()) {
+            return donationRepository.findAll(pageable);
+        } else {
+            return donationRepository.searchDonations(search, pageable);
+        }
     }
 
     public void deleteInstitution(Long id) {
