@@ -66,7 +66,7 @@
     </table>
 
     <div class="pagination" th:if="${totalPages > 1}">
-        <a th:href="@{/admin/donations(page=${currentPage - 1}, search=${search})}" th:if="${currentPage > 1}">&laquo;
+        <a th:href="@{/admin/donations(page=${currentPage -1}, search=${search})}" th:if="${currentPage > 1}">&laquo;
             Poprzednia</a>
         <span th:each="pageNumber : ${#numbers.sequence(1, totalPages)}">
                 <a th:href="@{/admin/donations(page=${pageNumber}, search=${search})}"

@@ -2,7 +2,11 @@ package org.jankowskirafal.oddamwdobrerece.donations;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,18 +22,24 @@ import java.util.Optional;
 @RequestMapping("/admin/donations")
 public class AdminDashboardViewController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AdminDashboardViewController.class);
     private final DonationService donationService;
 
     @GetMapping
     public String listInstitutions(Model model,
-                                   @RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = "1") int page, // Default to page 1
                                    @RequestParam(defaultValue = "10") int size,
                                    @RequestParam(required = false) String search) {
-        Page<Donation> donationPage = donationService.getAllDonations(page, size);
+
+        Page<Donation> donationPage = donationService.getAllDonations(page - 1, size, search); // Adjust page number
         model.addAttribute("donations", donationPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", donationPage.getTotalPages());
         model.addAttribute("search", search);
+        logger.info("listInstitutions");
+        logger.info(search);
+        logger.info(String.valueOf(donationPage.getTotalPages()));
+
         return "donations-list";
     }
 
@@ -41,8 +51,8 @@ public class AdminDashboardViewController {
 
     @PostMapping("/save")
     public String saveDonation(@Valid @ModelAttribute Donation donation,
-                                  BindingResult result,
-                                  RedirectAttributes redirectAttributes) {
+                               BindingResult result,
+                               RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "donation-form";
         }

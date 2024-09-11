@@ -67,7 +67,7 @@ public class DonationService {
         return new HomePageDto(donatedGifts, donatedBags, institutionPairs);
     }
 
-    public Page<Donation> getAllDonations(int page, int size) {
+    public Page<Donation> getAllDonations(int page, int size, String search) {
         Pageable pageable = PageRequest.of(page, size);
         return donationRepository.findAll(pageable);
     }
