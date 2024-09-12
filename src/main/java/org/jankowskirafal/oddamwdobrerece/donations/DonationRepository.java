@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Repository
 public interface DonationRepository extends JpaRepository<Donation, Long> {
@@ -42,15 +43,35 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
             @Param("institution") Institution institution,
             @Param("user") User user);
 
-    @Query("SELECT d FROM Donation d " +
-            "LEFT JOIN d.user u " +
-            "LEFT JOIN d.institution i " +
-            "WHERE lower(d.street) LIKE lower(concat('%', :search, '%')) " +
-            "OR lower(d.city) LIKE lower(concat('%', :search, '%')) " +
-            "OR lower(d.zip) LIKE lower(concat('%', :search, '%')) " +
-            "OR lower(u.email) LIKE lower(concat('%', :search, '%')) " +
-            "OR lower(i.name) LIKE lower(concat('%', :search, '%'))")
-    Page<Donation> searchDonations(@Param("search") String searchTerm, Pageable pageable);
+    @Query("SELECT DISTINCT d FROM Donation d LEFT JOIN d.categories c " +
+            "WHERE (:institutionId IS NULL OR d.institution.institutionId = :institutionId) " +
+            "AND (:pickUpDate IS NULL OR d.pickUpDate = :pickUpDate) " +
+            "AND (:pickUpTime IS NULL OR d.pickUpTime = :pickUpTime) " +
+            "AND (:city IS NULL OR LOWER(d.city) = LOWER(:city)) " +
+            "AND (:categoryIds IS NULL OR c.categoryId IN :categoryIds)")
+    Page<Donation> findAllWithFilters(@Param("institutionId") Long institutionId,
+                                      @Param("pickUpDate") LocalDate pickUpDate,
+                                      @Param("pickUpTime") LocalTime pickUpTime,
+                                      @Param("city") String city,
+                                      @Param("categoryIds") List<Long> categoryIds,
+                                      Pageable pageable);
 
+    @Query("SELECT DISTINCT d FROM Donation d LEFT JOIN d.categories c " +
+            "WHERE (:search IS NULL OR :search = '' OR " +
+            "       LOWER(d.city) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "       LOWER(d.street) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "       LOWER(d.institution.name) LIKE LOWER(CONCAT('%', :search, '%'))) " +
+            "AND (:institutionId IS NULL OR d.institution.institutionId = :institutionId) " +
+            "AND (:pickUpDate IS NULL OR d.pickUpDate = :pickUpDate) " +
+            "AND (:pickUpTime IS NULL OR d.pickUpTime = :pickUpTime) " +
+            "AND (:city IS NULL OR :city = '' OR LOWER(d.city) = LOWER(:city)) " +
+            "AND (COALESCE(:categoryIds, NULL) IS NULL OR c.categoryId IN :categoryIds)")
+    Page<Donation> searchAndFilterDonations(@Param("search") String search,
+                                            @Param("institutionId") Long institutionId,
+                                            @Param("pickUpDate") LocalDate pickUpDate,
+                                            @Param("pickUpTime") LocalTime pickUpTime,
+                                            @Param("city") String city,
+                                            @Param("categoryIds") List<Long> categoryIds,
+                                            Pageable pageable);
 
 }
