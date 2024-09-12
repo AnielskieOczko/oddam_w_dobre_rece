@@ -2,6 +2,8 @@ package org.jankowskirafal.oddamwdobrerece.donations;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.jankowskirafal.oddamwdobrerece.categories.CategoryService;
+import org.jankowskirafal.oddamwdobrerece.institutions.InstitutionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -24,15 +26,29 @@ public class AdminDashboardViewController {
 
     private static final Logger logger = LoggerFactory.getLogger(AdminDashboardViewController.class);
     private final DonationService donationService;
+    private final InstitutionService institutionService;
+    private final CategoryService categoryService;
 
     @GetMapping
-    public String listInstitutions(Model model,
-                                   @RequestParam(defaultValue = "1") int page, // Default to page 1
-                                   @RequestParam(defaultValue = "10") int size,
-                                   @RequestParam(required = false, defaultValue = "") String search) {
+    public String displayDonationList(Model model,
+                                      @ModelAttribute DonationFilterDTO donationFilterDTO,
+                                      @RequestParam(defaultValue = "1") int page,
+                                      @RequestParam(defaultValue = "5") int size,
+                                      @RequestParam(required = false, defaultValue = "") String search) {
 
-        Page<Donation> donationPage = donationService.getAllDonations(page - 1, size, search); // Adjust page number
+//        if (donationFilterDTO.getCategoryIds() != null && donationFilterDTO.getCategoryIds().contains(null)) {
+//            donationFilterDTO.setCategoryIds(null);
+//        }
+
+        Page<Donation> donationPage = donationService.getAllDonationsWithSearchAndFilters(search,
+                donationFilterDTO,
+                page - 1,
+                size);
+
         model.addAttribute("donations", donationPage.getContent());
+        model.addAttribute("institutions", institutionService.getAllInstitutionsForDropdown());
+        model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("filter", donationFilterDTO);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", donationPage.getTotalPages());
         model.addAttribute("search", search);
