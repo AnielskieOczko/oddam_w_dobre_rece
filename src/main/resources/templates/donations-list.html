@@ -7,12 +7,43 @@
 <section>
     <h2>Lista Darów</h2>
 
-    <div class="action-bar">
-        <form th:action="@{/admin/donations}" method="get" class="search-form">
-            <input type="text" name="search" th:value="${search}" placeholder="Szukaj daru..." class="search-input"/>
-            <button type="submit" class="btn btn-search">Szukaj</button>
+<!--    <div class="action-bar">-->
+<!--        <form th:action="@{/admin/donations}" method="get" class="search-form">-->
+<!--            <input type="text" name="search" th:value="${search}" placeholder="Szukaj daru..." class="search-input"/>-->
+<!--            <button type="submit" class="btn btn-search">Szukaj</button>-->
+<!--        </form>-->
+<!--        <a th:href="@{/admin/donations/add}" class="btn btn-add">Dodaj Dar</a>-->
+<!--    </div>-->
+
+    <div>
+        <form th:action="@{/admin/donations}" method="get" th:object="${filter}">
+            <input type="text" name="search" th:value="${search}" placeholder="Search...">
+
+            <select th:field="*{institutionId}">
+                <option value="">All Institutions</option>
+                <option th:each="inst : ${institutions}" th:value="${inst.institutionId}" th:text="${inst.name}"></option>
+            </select>
+
+            <input type="date" th:field="*{pickUpDate}" />
+            <input type="time" th:field="*{pickUpTime}" />
+
+            <input type="text" th:field="*{city}" placeholder="City" />
+
+<!--            <select th:field="*{categoryIds}" multiple>-->
+<!--                <option value="" selected>All Categories</option>-->
+<!--                <option th:each="cat : ${categories}" th:value="${cat.categoryId}" th:text="${cat.name}"></option>-->
+<!--            </select>-->
+
+            <div class="form-group" th:each="category : ${categories}">
+                <label>
+                    <input type="checkbox" name="categoryIds" th:value="${category.categoryId}"
+                           th:checked="${filter.categoryIds != null and filter.categoryIds.contains(category.categoryId)}" />
+                    <span th:text="${category.name}"></span>
+                </label>
+            </div>
+
+            <button type="submit">Apply Filters</button>
         </form>
-        <a th:href="@{/admin/donations/add}" class="btn btn-add">Dodaj Dar</a>
     </div>
 
     <table class="admin-table">
