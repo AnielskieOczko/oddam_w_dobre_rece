@@ -67,13 +67,21 @@ public class DonationService {
         return new HomePageDto(donatedGifts, donatedBags, institutionPairs);
     }
 
-    public Page<Donation> getAllDonations(int page, int size, String search) {
+    public Page<Donation> getAllDonationsWithSearchAndFilters(String search, DonationFilterDTO filterDTO, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        if (search.trim().isBlank()) {
+        if ((search == null || search.trim().isEmpty()) && filterDTO.isEmpty()) {
             return donationRepository.findAll(pageable);
         } else {
-            return donationRepository.searchDonations(search, pageable);
+            return donationRepository.searchAndFilterDonations(
+                    search,
+                    filterDTO.getInstitutionId(),
+                    filterDTO.getPickUpDate(),
+                    filterDTO.getPickUpTime(),
+                    filterDTO.getCity(),
+                    filterDTO.getCategoryIds(),
+                    pageable
+            );
         }
     }
 
