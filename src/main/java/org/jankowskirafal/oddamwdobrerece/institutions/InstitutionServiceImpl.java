@@ -28,6 +28,11 @@ public class InstitutionServiceImpl implements InstitutionService {
     }
 
     @Override
+    public List<Institution> getAllInstitutionsForDropdown() {
+        return institutionRepository.findAll();
+    }
+
+    @Override
     public Optional<Institution> getInstitutionById(Long id) {
         return institutionRepository.findById(id);
     }

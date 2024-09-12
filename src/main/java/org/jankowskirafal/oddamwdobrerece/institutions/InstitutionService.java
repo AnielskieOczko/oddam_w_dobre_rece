@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface InstitutionService {
 
     Page<Institution> getAllInstitutions(int page, int size, String search);
+    public List<Institution> getAllInstitutionsForDropdown();
     Optional<Institution> getInstitutionById(Long id);
     Institution saveInstitution(Institution institution);
     void updateInstitution(Institution institution);
