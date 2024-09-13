@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add/Edit User</title>
+    <style>
+        /* Basic form styling (adapt to your existing CSS) */
+        body {
+            font-family: sans-serif;
+        }
+
+        .container {
+            width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 120px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .has-error input,
+        .has-error textarea {
+            border-color: red;
+        }
+
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Add/Edit User</h2>
+    <form th:action="@{/admin/users/save}" method="post" th:object="${user}">
+        <input type="hidden" th:field="*{id}">
+
+        <div class="form-group" th:classappend="${#fields.hasErrors('email')} ? 'has-error'">
+            <label for="email">Email:</label>
+            <input type="email" th:field="*{email}" id="email">
+            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></span>
+        </div>
+
+        <div class="form-group" th:classappend="${#fields.hasErrors('password')} ? 'has-error'">
+            <label for="password">Password:</label>
+            <input type="password" th:field="*{password}" id="password">
+            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="authorities">Roles:</label>
+            <select id="authorities" multiple="multiple" th:field="${user.authorities}">
+                <option th:each="authority : ${allAuthorities}"
+                        th:value="${authority.name}"
+                        th:text="${authority.name}">
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="isActive">Active:</label>
+            <input type="checkbox" th:field="*{active}" id="isActive">
+        </div>
+
+        <button type="submit">Save User</button>
+    </form>
+</div>
+
+</body>
+</html>

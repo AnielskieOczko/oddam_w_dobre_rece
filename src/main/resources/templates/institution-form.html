@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add/Edit Institution</title>
+    <style>
+        /* Basic form styling (adapt to your existing CSS) */
+        body {
+            font-family: sans-serif;
+        }
+
+        .container {
+            width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 120px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .has-error input,
+        .has-error textarea {
+            border-color: red;
+        }
+
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Add/Edit Institution</h2>
+    <form th:action="@{/admin/institutions/save}" method="post" th:object="${institution}">
+        <input type="hidden" th:field="*{institutionId}"> <div class="form-group" th:classappend="${#fields.hasErrors('name')} ? 'has-error'">
+        <label for="name">Name:</label>
+        <input type="text" th:field="*{name}" id="name">
+        <span th:if="${#fields.hasErrors('name')}" th:errors="${name}" class="error-message"></span>
+<!--    </div>-->
+
+        <div class="form-group" th:classappend="*{#fields.hasErrors('description')} ? 'has-error'">
+            <label for="description">Description:</label>
+            <textarea th:field="*{description}" id="description"></textarea>
+            <span th:if="${#fields.hasErrors('description')}" th:errors="${description}" class="error-message"></span>
+        </div>
+
+        <button type="submit">Save Institution</button>
+    </form>
+</div>
+
+</body>
+</html>

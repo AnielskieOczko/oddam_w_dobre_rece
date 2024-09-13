@@ -22,23 +22,24 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     @NotEmpty
     @Column(unique = true)
     private String email;
+
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER) // Load authorities eagerly
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "users_authorities", // Name of the join table
+            name = "users_authorities",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id")
     )
     private Set<Authority> authorities = new HashSet<>();
 
     @Column(name = "is_active", nullable = false)
-    private boolean isActive = true; // Set default to true (active)
+    private boolean isActive = true;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user")
     private Set<Donation> donations = new HashSet<>();
-
 }

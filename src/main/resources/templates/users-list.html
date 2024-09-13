@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{admin-header :: admin-head (pageTitle='Zarzadzanie Użytkownikami')}"></div>
+
+<body>
+<div th:replace="~{admin-navbar :: admin-nav}"></div>
+<section>
+    <h2>Lista Użytkowników</h2>
+
+    <div class="action-bar">
+        <form th:action="@{/admin/users}" method="get" class="search-form">
+            <input type="text" name="search" th:value="${search}" placeholder="Szukaj fundacji..."
+                   class="search-input"/>
+            <button type="submit" class="btn btn-search">Szukaj</button>
+        </form>
+        <a th:href="@{/admin/users/add}" class="btn btn-add">Dodaj Użytkownika</a>
+    </div>
+
+    <table class="admin-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Stan</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.email}"></td>
+            <td>
+              <span th:each="authority : ${user.authorities}"
+                    th:text="${authority.name}"
+                    class="category-name">
+              </span>
+            </td>
+            <td>
+                <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="btn btn-edit">Edytuj</a>
+                <form th:action="@{/admin/users/delete/{id}(id=${user.id})}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-delete"
+                            onclick="return confirm('Czy na pewno chcesz usunąć tego użytkownika?')">Usuń
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination" th:if="${totalPages > 1}">
+        <a th:href="@{/admin/institutions(page=${currentPage - 1}, search=${search})}" th:if="${currentPage > 1}">&laquo;
+            Poprzednia</a>
+        <span th:each="pageNumber : ${#numbers.sequence(1, totalPages)}">
+                <a th:href="@{/admin/institutions(page=${pageNumber}, search=${search})}"
+                   th:text="${pageNumber}"
+                   th:class="${pageNumber==currentPage} ? 'active' : ''"></a>
+            </span>
+        <a th:href="@{/admin/institutions(page=${currentPage + 1}, search=${search})}"
+           th:if="${currentPage < totalPages}">Następna &raquo;</a>
+    </div>
+</section>
+</body>
+</html>

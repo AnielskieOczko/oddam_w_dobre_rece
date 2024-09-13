@@ -1,23 +1,21 @@
 package org.jankowskirafal.oddamwdobrerece.institutions;
 
-import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
-@AllArgsConstructor
-@Transactional
-public class InstitutionService {
-    private final InstitutionRepository institutionRepository;
+public interface InstitutionService {
 
-    public List<Institution> getAll() {
+    Page<Institution> getAllInstitutions(int page, int size, String search);
+    public List<Institution> getAllInstitutionsForDropdown();
+    Optional<Institution> getInstitutionById(Long id);
+    Institution saveInstitution(Institution institution);
+    void updateInstitution(Institution institution);
+    void deleteInstitution(Long id);
 
-        return institutionRepository.findAll();
-    }
+    List<Institution> getAll();
 
-    public Institution addInstitution(Institution institution) {
-        return institutionRepository.save(institution);
-    }
 }
