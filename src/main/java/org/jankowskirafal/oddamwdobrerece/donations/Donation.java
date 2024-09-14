@@ -49,6 +49,9 @@ public class Donation {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Enumerated(EnumType.STRING)
+    DonationStatus status = DonationStatus.NEW; // default for new donation
+
 //    @NotBlank(message = "Street is required")
     String street;
     String city;
