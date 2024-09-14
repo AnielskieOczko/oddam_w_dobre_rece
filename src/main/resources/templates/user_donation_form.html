@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add/Edit Donation</title>
+    <style>
+        /* Basic form styling (adapt to your existing CSS) */
+        body {
+            font-family: sans-serif;
+        }
+
+        .container {
+            width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 120px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .has-error input,
+        .has-error textarea {
+            border-color: red;
+        }
+
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Add/Edit Institution</h2>
+    <form th:action="@{/user/donations/save}" method="post" th:object="${donation}">
+        <input type="hidden" th:field="*{donationId}">
+
+        <div class="form-group" th:classappend="${#fields.hasErrors('user')} ? 'has-error'">
+            <label for="user">user:</label>
+            <input type="text" th:field="*{user.email}" id="user" disabled>
+            <span th:if="${#fields.hasErrors('user')}" th:errors="*{user}" class="error-message"></span>
+        </div>
+
+        <div class="form-group" th:classappend="${#fields.hasErrors('status')} ? 'has-error'">
+            <label for="status">Status:</label>
+            <select th:field="*{status}" id="status">
+                <option value="">Select Status</option>
+                <option th:each="status : ${donationForm.donationStatuses()}" th:value="${status}"
+                        th:text="${status.name}"></option>
+            </select>
+            <span th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="error-message"></span>
+        </div>
+
+        <div class="form-group" th:classappend="${#fields.hasErrors('quantity')} ? 'has-error'">
+            <label for="quantity">Quantity:</label>
+            <input type="number" th:field="*{quantity}" id="quantity">
+            <span th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}" class="error-message"></span>
+        </div>
+
+        <div class="form-group" th:classappend="${#fields.hasErrors('categories')} ? 'has-error'">
+            <label>Categories:</label>
+            <div th:each="category : ${donationForm.categories}">
+                <label>
+                    <input type="checkbox" th:field="*{categories}" th:value="${category.categoryId}">
+                    <span th:text="${category.name}"></span>
+                </label>
+            </div>
+            <span th:if="${#fields.hasErrors('categories')}" th:errors="*{categories}" class="error-message"></span>
+        </div>
+
+        <div class="form-group" th:classappend="${#fields.hasErrors('institution')} ? 'has-error'">
+            <label for="institution">Institution:</label>
+            <select th:field="*{institution}" id="institution">
+                <option value="">Select Institution</option>
+                <option th:each="institution : ${donationForm.institutions}" th:value="${institution.institutionId}"
+                        th:text="${institution.name}"></option>
+            </select>
+            <span th:if="${#fields.hasErrors('institution')}" th:errors="*{institution}" class="error-message"></span>
+        </div>
+
+        <!--        <div class="form-group" th:classappend="${#fields.hasErrors('donation.user')} ? 'has-error'">-->
+        <!--            <label for="user">User:</label>-->
+        <!--            <select th:field="*{user}" id="user">-->
+        <!--                <option value="">Select User</option>-->
+        <!--                <option th:each="user : ${donationForm.users}" th:value="${user.userId}" th:text="${user.username}"></option> </select>-->
+        <!--            <span th:if="${#fields.hasErrors('user')}" th:errors="*{donation.user}" class="error-message"></span>-->
+        <!--        </div>-->
+
+        <!-- Add input fields for address details: street, city, zip, phone -->
+
+        <div class="form-group" th:classappend="${#fields.hasErrors('city')} ? 'has-error'">
+            <label for="city">City:</label>
+            <input type="text" th:field="*{city}" id="city">
+            <span th:if="${#fields.hasErrors('city')}" th:errors="*{city}" class="error-message"></span>
+        </div>
+        <div class="form-group" th:classappend="${#fields.hasErrors('zip')} ? 'has-error'">
+            <label for="zip">Zip:</label>
+            <input type="text" th:field="*{zip}" id="zip">
+            <span th:if="${#fields.hasErrors('zip')}" th:errors="*{zip}" class="error-message"></span>
+        </div>
+        <div class="form-group" th:classappend="${#fields.hasErrors('city')} ? 'has-error'">
+            <label for="street">Street:</label>
+            <input type="text" th:field="*{street}" id="street">
+            <span th:if="${#fields.hasErrors('street')}" th:errors="*{street}" class="error-message"></span>
+        </div>
+        <div class="form-group" th:classappend="${#fields.hasErrors('pickUpDate')} ? 'has-error'">
+            <label for="pickUpDate">PickUp Date:</label>
+            <input type="date" th:field="*{pickUpDate}" id="pickUpDate">
+            <span th:if="${#fields.hasErrors('pickUpDate')}" th:errors="*{pickUpDate}" class="error-message"></span>
+        </div>
+        <div class="form-group" th:classappend="${#fields.hasErrors('pickUpTime')} ? 'has-error'">
+            <label for="pickUpTime">PickUp Time:</label>
+            <input type="time" th:field="*{pickUpTime}" id="pickUpTime">
+            <span th:if="${#fields.hasErrors('pickUpTime')}" th:errors="*{pickUpTime}" class="error-message"></span>
+        </div>
+        <div class="form-group" th:classappend="${#fields.hasErrors('phone')} ? 'has-error'">
+            <label for="phone">Phone:</label>
+            <input type="text" th:field="*{phone}" id="phone">
+            <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="error-message"></span>
+        </div>
+        <!-- Add input fields for pick-up details: pickUpDate, pickUpTime, pickUpComment -->
+        <div class="form-group" th:classappend="${#fields.hasErrors('pickUpComment')} ? 'has-error'">
+            <label for="pickUpComment">pickUpComment:</label>
+            <input type="text" th:field="*{pickUpComment}" id="pickUpComment">
+            <span th:if="${#fields.hasErrors('pickUpComment')}" th:errors="*{pickUpComment}"
+                  class="error-message"></span>
+        </div>
+
+        <button type="submit">Save Donation</button>
+    </form>
+</div>
+
+</body>
+</html>

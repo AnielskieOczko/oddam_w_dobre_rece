@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
-<div th:replace="~{admin-header :: admin-head (pageTitle='Zarzadzanie Instytucjami')}"></div>
+<div th:replace="~{user-header :: user-head (pageTitle='Konto użytkownika')}"></div>
 
 <body>
-<div th:replace="~{admin-navbar :: admin-nav}"></div>
+<div th:replace="~{user-navbar :: user-nav}"></div>
 <section>
     <h2>Lista Darów</h2>
 
@@ -16,7 +16,7 @@
 <!--    </div>-->
 
     <div>
-        <form th:action="@{/admin/donations}" method="get" th:object="${filter}">
+        <form th:action="@{/user/donations}" method="get" th:object="${filter}">
             <input type="text" name="search" th:value="${search}" placeholder="Search...">
 
             <select th:field="*{institutionId}">
@@ -61,6 +61,7 @@
             <th>Data odbioru</th>
             <th>Godz. odbioru</th>
             <th>Komentarz</th>
+            <th>Status</th>
             <th>Akcje</th>
         </tr>
         </thead>
@@ -83,9 +84,10 @@
             <td th:text="${donation.pickUpDate}"></td>
             <td th:text="${donation.pickUpTime}"></td>
             <td th:text="${donation.pickUpComment}"></td>
+            <td th:text="${donation.status}"></td>
             <td>
-<!--                <a th:href="@{/admin/donations/edit/{id}(id=${donation.donationId})}" class="btn btn-edit">Edytuj</a>-->
-                <form th:action="@{/admin/donations/delete/{id}(id=${donation.donationId})}" method="post"
+                <a th:href="@{/user/donations/edit/{id}(id=${donation.donationId})}" class="btn btn-edit">Edytuj</a>
+                <form th:action="@{/user/donations/delete/{id}(id=${donation.donationId})}" method="post"
                       style="display:inline;">
                     <button type="submit" class="btn btn-delete"
                             onclick="return confirm('Czy na pewno chcesz usunąć tę fundację?')">Usuń
@@ -97,14 +99,14 @@
     </table>
 
     <div class="pagination" th:if="${totalPages > 1}">
-        <a th:href="@{/admin/donations(page=${currentPage -1}, search=${search})}" th:if="${currentPage > 1}">&laquo;
+        <a th:href="@{/user/donations(page=${currentPage -1}, search=${search})}" th:if="${currentPage > 1}">&laquo;
             Poprzednia</a>
         <span th:each="pageNumber : ${#numbers.sequence(1, totalPages)}">
-                <a th:href="@{/admin/donations(page=${pageNumber}, search=${search})}"
+                <a th:href="@{/user/donations(page=${pageNumber}, search=${search})}"
                    th:text="${pageNumber}"
                    th:class="${pageNumber==currentPage} ? 'active' : ''"></a>
             </span>
-        <a th:href="@{/admin/donations(page=${currentPage + 1}, search=${search})}" th:if="${currentPage < totalPages}">Następna
+        <a th:href="@{/user/donations(page=${currentPage + 1}, search=${search})}" th:if="${currentPage < totalPages}">Następna
             &raquo;</a>
     </div>
 </section>

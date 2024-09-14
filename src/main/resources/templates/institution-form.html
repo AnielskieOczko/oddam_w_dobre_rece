@@ -75,7 +75,6 @@
         <label for="name">Name:</label>
         <input type="text" th:field="*{name}" id="name">
         <span th:if="${#fields.hasErrors('name')}" th:errors="${name}" class="error-message"></span>
-<!--    </div>-->
 
         <div class="form-group" th:classappend="*{#fields.hasErrors('description')} ? 'has-error'">
             <label for="description">Description:</label>
