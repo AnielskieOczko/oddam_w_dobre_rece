@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -28,7 +29,8 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
     @Query("UPDATE Donation d " +
             "SET d.quantity = :quantity, d.street = :street, d.city = :city, d.zip = :zip, " +
             "d.phone = :phone, d.pickUpDate = :pickUpDate, d.pickUpTime = :pickUpTime, " +
-            "d.pickUpComment = :pickUpComment, d.institution = :institution, d.user = :user " +
+            "d.pickUpComment = :pickUpComment, d.institution = :institution, d.user = :user, " +
+            "d.status = :status " +
             "WHERE d.donationId = :donationId")
     void updateDonation(
             @Param("donationId") Long donationId,
@@ -41,7 +43,8 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
             @Param("pickUpTime") LocalTime pickUpTime,
             @Param("pickUpComment") String pickUpComment,
             @Param("institution") Institution institution,
-            @Param("user") User user);
+            @Param("user") User user,
+            @Param("status") DonationStatus status);
 
     @Query("SELECT DISTINCT d FROM Donation d LEFT JOIN d.categories c " +
             "WHERE (:institutionId IS NULL OR d.institution.institutionId = :institutionId) " +

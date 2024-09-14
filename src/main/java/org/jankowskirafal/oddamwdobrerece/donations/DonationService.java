@@ -26,9 +26,9 @@ public class DonationService {
     private final DonationRepository donationRepository;
     private final InstitutionServiceImpl institutionServiceImpl;
 
-    public Donation createDonation(Donation donation) {
-        return donationRepository.save(donation);
-    }
+//    public Donation createDonation(Donation donation) {
+//        return donationRepository.save(donation);
+//    }
 
     public void saveAll(List<Donation> donations) {
         donationRepository.saveAll(donations);
@@ -85,7 +85,7 @@ public class DonationService {
         }
     }
 
-    public void deleteInstitution(Long id) {
+    public void deleteDonation(Long id) {
         donationRepository.deleteById(id);
     }
 
@@ -101,7 +101,8 @@ public class DonationService {
                 donation.getPickUpTime(),
                 donation.getPickUpComment(),
                 donation.getInstitution(),
-                donation.getUser()
+                donation.getUser(),
+                donation.getStatus()
         );
     }
 
