@@ -3,12 +3,12 @@ package org.jankowskirafal.oddamwdobrerece.donations;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.jankowskirafal.oddamwdobrerece.categories.CategoryService;
+import org.jankowskirafal.oddamwdobrerece.contactform.ContactForm;
+import org.jankowskirafal.oddamwdobrerece.dtos.AdminDonationFormDto;
 import org.jankowskirafal.oddamwdobrerece.institutions.InstitutionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @Controller
@@ -36,10 +37,6 @@ public class AdminDashboardViewController {
                                       @RequestParam(defaultValue = "5") int size,
                                       @RequestParam(required = false, defaultValue = "") String search) {
 
-//        if (donationFilterDTO.getCategoryIds() != null && donationFilterDTO.getCategoryIds().contains(null)) {
-//            donationFilterDTO.setCategoryIds(null);
-//        }
-
         Page<Donation> donationPage = donationService.getAllDonationsWithSearchAndFilters(search,
                 donationFilterDTO,
                 page - 1,
@@ -56,13 +53,13 @@ public class AdminDashboardViewController {
         logger.info(search);
         logger.info(String.valueOf(donationPage.getTotalPages()));
 
-        return "donations-list";
+        return "admin_donations_list";
     }
 
     @GetMapping("/add")
     public String showDonationForm(Model model) {
         model.addAttribute("donation", new Donation());
-        return "donation-form";
+        return "admin_donation_form";
     }
 
     @PostMapping("/save")
@@ -70,7 +67,7 @@ public class AdminDashboardViewController {
                                BindingResult result,
                                RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            return "donation-form";
+            return "admin_donation_form";
         }
 
         if (donation.getDonationId() == null) {
@@ -79,7 +76,6 @@ public class AdminDashboardViewController {
             donationService.updateDonation(donation);
         }
 
-        donationService.saveDonation(donation);
         redirectAttributes.addFlashAttribute("message", "Dar został pomyślnie zapisany.");
         return "redirect:/admin/donations";
     }
@@ -87,23 +83,35 @@ public class AdminDashboardViewController {
     @GetMapping("/edit/{id}")
     public String showEditDonationForm(@PathVariable Long id, Model model) {
 
+        AdminDonationFormDto adminDonationFormDto = new AdminDonationFormDto(
+                categoryService.getAllCategories(),
+                institutionService.getAll(),
+                Arrays.stream(DonationStatus.values()).toList(),
+                new Donation(),
+                new ContactForm()
+        );
+
+        model.addAttribute("donationForm", adminDonationFormDto);
+
         Optional<Donation> donation = donationService.getDonationById(id);
 
         if (donation.isPresent()) {
-            model.addAttribute("donation", donation);
+            model.addAttribute("donation", donation.get());
+            logger.info(String.valueOf(donation.get().pickUpDate));
+            logger.info(String.valueOf(donation.get().status));
+            logger.info(String.valueOf(donation.get().pickUpTime));
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Donation not found.");
         }
 
-        return "donation-form";
+        return "admin_donation_form";
     }
 
     @PostMapping("/delete/{id}")
     public String deleteInstitution(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        donationService.deleteInstitution(id);
+        donationService.deleteDonation(id);
         redirectAttributes.addFlashAttribute("message", "Dar została usunięta.");
         return "redirect:/admin/donations";
-
-
     }
+    
 }
