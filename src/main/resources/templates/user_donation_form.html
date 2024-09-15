@@ -70,7 +70,7 @@
 
 <div class="container">
     <h2>Add/Edit Institution</h2>
-    <form th:action="@{/user/donations/save}" method="post" th:object="${donation}">
+    <form th:action="@{/user/donations/save}" method="post" th:object="${donationForm.donation}">
         <input type="hidden" th:field="*{donationId}">
 
         <div class="form-group" th:classappend="${#fields.hasErrors('user')} ? 'has-error'">
@@ -81,7 +81,7 @@
 
         <div class="form-group" th:classappend="${#fields.hasErrors('status')} ? 'has-error'">
             <label for="status">Status:</label>
-            <select th:field="*{status}" id="status">
+            <select th:field="*{status}" id="status" disabled>
                 <option value="">Select Status</option>
                 <option th:each="status : ${donationForm.donationStatuses()}" th:value="${status}"
                         th:text="${status.name}"></option>
@@ -91,7 +91,7 @@
 
         <div class="form-group" th:classappend="${#fields.hasErrors('quantity')} ? 'has-error'">
             <label for="quantity">Quantity:</label>
-            <input type="number" th:field="*{quantity}" id="quantity">
+            <input type="number" th:field="*{quantity}" id="quantity" disabled>
             <span th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}" class="error-message"></span>
         </div>
 
@@ -99,7 +99,7 @@
             <label>Categories:</label>
             <div th:each="category : ${donationForm.categories}">
                 <label>
-                    <input type="checkbox" th:field="*{categories}" th:value="${category.categoryId}">
+                    <input type="checkbox" th:field="*{categories}" th:value="${category.categoryId}" disabled>
                     <span th:text="${category.name}"></span>
                 </label>
             </div>
@@ -108,7 +108,7 @@
 
         <div class="form-group" th:classappend="${#fields.hasErrors('institution')} ? 'has-error'">
             <label for="institution">Institution:</label>
-            <select th:field="*{institution}" id="institution">
+            <select th:field="*{institution}" id="institution" disabled>
                 <option value="">Select Institution</option>
                 <option th:each="institution : ${donationForm.institutions}" th:value="${institution.institutionId}"
                         th:text="${institution.name}"></option>
@@ -116,55 +116,46 @@
             <span th:if="${#fields.hasErrors('institution')}" th:errors="*{institution}" class="error-message"></span>
         </div>
 
-        <!--        <div class="form-group" th:classappend="${#fields.hasErrors('donation.user')} ? 'has-error'">-->
-        <!--            <label for="user">User:</label>-->
-        <!--            <select th:field="*{user}" id="user">-->
-        <!--                <option value="">Select User</option>-->
-        <!--                <option th:each="user : ${donationForm.users}" th:value="${user.userId}" th:text="${user.username}"></option> </select>-->
-        <!--            <span th:if="${#fields.hasErrors('user')}" th:errors="*{donation.user}" class="error-message"></span>-->
-        <!--        </div>-->
-
-        <!-- Add input fields for address details: street, city, zip, phone -->
-
         <div class="form-group" th:classappend="${#fields.hasErrors('city')} ? 'has-error'">
             <label for="city">City:</label>
-            <input type="text" th:field="*{city}" id="city">
+            <input type="text" th:field="*{city}" id="city" disabled>
             <span th:if="${#fields.hasErrors('city')}" th:errors="*{city}" class="error-message"></span>
         </div>
         <div class="form-group" th:classappend="${#fields.hasErrors('zip')} ? 'has-error'">
             <label for="zip">Zip:</label>
-            <input type="text" th:field="*{zip}" id="zip">
+            <input type="text" th:field="*{zip}" id="zip" disabled>
             <span th:if="${#fields.hasErrors('zip')}" th:errors="*{zip}" class="error-message"></span>
         </div>
         <div class="form-group" th:classappend="${#fields.hasErrors('city')} ? 'has-error'">
             <label for="street">Street:</label>
-            <input type="text" th:field="*{street}" id="street">
+            <input type="text" th:field="*{street}" id="street" disabled>
             <span th:if="${#fields.hasErrors('street')}" th:errors="*{street}" class="error-message"></span>
         </div>
         <div class="form-group" th:classappend="${#fields.hasErrors('pickUpDate')} ? 'has-error'">
             <label for="pickUpDate">PickUp Date:</label>
-            <input type="date" th:field="*{pickUpDate}" id="pickUpDate">
+            <input type="date" th:field="*{pickUpDate}" id="pickUpDate" disabled>
             <span th:if="${#fields.hasErrors('pickUpDate')}" th:errors="*{pickUpDate}" class="error-message"></span>
         </div>
         <div class="form-group" th:classappend="${#fields.hasErrors('pickUpTime')} ? 'has-error'">
             <label for="pickUpTime">PickUp Time:</label>
-            <input type="time" th:field="*{pickUpTime}" id="pickUpTime">
+            <input type="time" th:field="*{pickUpTime}" id="pickUpTime" disabled>
             <span th:if="${#fields.hasErrors('pickUpTime')}" th:errors="*{pickUpTime}" class="error-message"></span>
         </div>
         <div class="form-group" th:classappend="${#fields.hasErrors('phone')} ? 'has-error'">
             <label for="phone">Phone:</label>
-            <input type="text" th:field="*{phone}" id="phone">
+            <input type="text" th:field="*{phone}" id="phone" disabled>
             <span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="error-message"></span>
         </div>
         <!-- Add input fields for pick-up details: pickUpDate, pickUpTime, pickUpComment -->
         <div class="form-group" th:classappend="${#fields.hasErrors('pickUpComment')} ? 'has-error'">
             <label for="pickUpComment">pickUpComment:</label>
-            <input type="text" th:field="*{pickUpComment}" id="pickUpComment">
+            <input type="text" th:field="*{pickUpComment}" id="pickUpComment" disabled>
             <span th:if="${#fields.hasErrors('pickUpComment')}" th:errors="*{pickUpComment}"
                   class="error-message"></span>
         </div>
 
-        <button type="submit">Save Donation</button>
+<!--        <button type="submit">Save Donation</button>-->
+        <a th:href="@{/user/donations}" class="btn btn-add">Back</a>
     </form>
 </div>
 

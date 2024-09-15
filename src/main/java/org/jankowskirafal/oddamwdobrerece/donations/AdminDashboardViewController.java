@@ -37,7 +37,7 @@ public class AdminDashboardViewController {
                                       @RequestParam(defaultValue = "5") int size,
                                       @RequestParam(required = false, defaultValue = "") String search) {
 
-        Page<Donation> donationPage = donationService.getAllDonationsWithSearchAndFilters(search,
+        Page<Donation> donationPage = donationService.getDonations(search,
                 donationFilterDTO,
                 page - 1,
                 size);
@@ -63,12 +63,16 @@ public class AdminDashboardViewController {
     }
 
     @PostMapping("/save")
-    public String saveDonation(@Valid @ModelAttribute Donation donation,
+    public String saveDonation(Model model,
+                               @ModelAttribute("donationForm") AdminDonationFormDto adminDonationFormDto,
                                BindingResult result,
-                               RedirectAttributes redirectAttributes) {
+                               RedirectAttributes redirectAttributes
+                               ) {
         if (result.hasErrors()) {
             return "admin_donation_form";
         }
+
+        Donation donation = adminDonationFormDto.donation();
 
         if (donation.getDonationId() == null) {
             donationService.saveDonation(donation);
@@ -83,20 +87,19 @@ public class AdminDashboardViewController {
     @GetMapping("/edit/{id}")
     public String showEditDonationForm(@PathVariable Long id, Model model) {
 
-        AdminDonationFormDto adminDonationFormDto = new AdminDonationFormDto(
-                categoryService.getAllCategories(),
-                institutionService.getAll(),
-                Arrays.stream(DonationStatus.values()).toList(),
-                new Donation(),
-                new ContactForm()
-        );
-
-        model.addAttribute("donationForm", adminDonationFormDto);
-
         Optional<Donation> donation = donationService.getDonationById(id);
 
         if (donation.isPresent()) {
-            model.addAttribute("donation", donation.get());
+            AdminDonationFormDto adminDonationFormDto = new AdminDonationFormDto(
+                    categoryService.getAllCategories(),
+                    institutionService.getAll(),
+                    Arrays.stream(DonationStatus.values()).toList(),
+                    donation.get(),
+                    new ContactForm()
+            );
+
+            model.addAttribute("donationForm", adminDonationFormDto);
+
             logger.info(String.valueOf(donation.get().pickUpDate));
             logger.info(String.valueOf(donation.get().status));
             logger.info(String.valueOf(donation.get().pickUpTime));

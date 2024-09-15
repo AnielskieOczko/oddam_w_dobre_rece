@@ -62,6 +62,8 @@
             <th>Godz. odbioru</th>
             <th>Komentarz</th>
             <th>Status</th>
+            <th>Creation date</th>
+            <th>Last update</th>
             <th>Akcje</th>
         </tr>
         </thead>
@@ -85,6 +87,8 @@
             <td th:text="${donation.pickUpTime}"></td>
             <td th:text="${donation.pickUpComment}"></td>
             <td th:text="${donation.status}"></td>
+            <td th:text="${donation.creationDateTime}"></td>
+            <td th:text="${donation.updateDateTime}"></td>
             <td>
                 <a th:href="@{/admin/donations/edit/{id}(id=${donation.donationId})}" class="btn btn-edit">Edytuj</a>
                 <form th:action="@{/admin/donations/delete/{id}(id=${donation.donationId})}" method="post"

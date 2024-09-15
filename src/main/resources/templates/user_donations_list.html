@@ -1,19 +1,13 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <div th:replace="~{user-header :: user-head (pageTitle='Konto użytkownika')}"></div>
 
 <body>
 <div th:replace="~{user-navbar :: user-nav}"></div>
+
+
 <section>
     <h2>Lista Darów</h2>
-
-<!--    <div class="action-bar">-->
-<!--        <form th:action="@{/admin/donations}" method="get" class="search-form">-->
-<!--            <input type="text" name="search" th:value="${search}" placeholder="Szukaj daru..." class="search-input"/>-->
-<!--            <button type="submit" class="btn btn-search">Szukaj</button>-->
-<!--        </form>-->
-<!--        <a th:href="@{/admin/donations/add}" class="btn btn-add">Dodaj Dar</a>-->
-<!--    </div>-->
 
     <div>
         <form th:action="@{/user/donations}" method="get" th:object="${filter}">
@@ -28,11 +22,6 @@
             <input type="time" th:field="*{pickUpTime}" />
 
             <input type="text" th:field="*{city}" placeholder="City" />
-
-<!--            <select th:field="*{categoryIds}" multiple>-->
-<!--                <option value="" selected>All Categories</option>-->
-<!--                <option th:each="cat : ${categories}" th:value="${cat.categoryId}" th:text="${cat.name}"></option>-->
-<!--            </select>-->
 
             <div class="form-group" th:each="category : ${categories}">
                 <label>
@@ -62,6 +51,8 @@
             <th>Godz. odbioru</th>
             <th>Komentarz</th>
             <th>Status</th>
+            <th>Creation date</th>
+            <th>Last update</th>
             <th>Akcje</th>
         </tr>
         </thead>
@@ -85,12 +76,14 @@
             <td th:text="${donation.pickUpTime}"></td>
             <td th:text="${donation.pickUpComment}"></td>
             <td th:text="${donation.status}"></td>
+            <td th:text="${donation.creationDateTime}"></td>
+            <td th:text="${donation.updateDateTime}"></td>
             <td>
-                <a th:href="@{/user/donations/edit/{id}(id=${donation.donationId})}" class="btn btn-edit">Edytuj</a>
-                <form th:action="@{/user/donations/delete/{id}(id=${donation.donationId})}" method="post"
-                      style="display:inline;">
-                    <button type="submit" class="btn btn-delete"
-                            onclick="return confirm('Czy na pewno chcesz usunąć tę fundację?')">Usuń
+                <a th:href="@{/user/donations/edit/{id}(id=${donation.donationId})}" class="btn btn-add">View</a>
+                <form th:action="@{/user/donations/{donationId}/updateStatus(donationId=${donation.donationId})}"
+                      th:if="${donation.status.name == 'NEW' || donation.status.name == 'READY_FOR_PICKUP'}" method="post">
+                    <button type="submit" class="btn btn-edit"
+                            th:text="${donation.status.name == 'NEW'} ? 'Ready for pickup' : 'Picked up'">
                     </button>
                 </form>
             </td>

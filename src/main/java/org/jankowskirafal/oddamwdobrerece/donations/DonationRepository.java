@@ -12,6 +12,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
             "SET d.quantity = :quantity, d.street = :street, d.city = :city, d.zip = :zip, " +
             "d.phone = :phone, d.pickUpDate = :pickUpDate, d.pickUpTime = :pickUpTime, " +
             "d.pickUpComment = :pickUpComment, d.institution = :institution, d.user = :user, " +
-            "d.status = :status " +
+            "d.status = :status, d.updateDateTime = :updateDateTime " +
             "WHERE d.donationId = :donationId")
     void updateDonation(
             @Param("donationId") Long donationId,
@@ -44,7 +45,14 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
             @Param("pickUpComment") String pickUpComment,
             @Param("institution") Institution institution,
             @Param("user") User user,
-            @Param("status") DonationStatus status);
+            @Param("status") DonationStatus status,
+            @Param("updateDateTime") LocalDateTime updateDateTime);
+
+    @Modifying
+    @Query("UPDATE Donation d SET d.status = :status, d.updateDateTime = :updateDateTime WHERE d.donationId = :donationId")
+    void updateDonationStatus(@Param("donationId") Long donationId,
+                              @Param("status") DonationStatus status,
+                              @Param("updateDateTime") LocalDateTime updateDateTime);
 
     @Query("SELECT DISTINCT d FROM Donation d LEFT JOIN d.categories c " +
             "WHERE (:institutionId IS NULL OR d.institution.institutionId = :institutionId) " +
@@ -77,4 +85,23 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
                                             @Param("categoryIds") List<Long> categoryIds,
                                             Pageable pageable);
 
+    @Query("SELECT DISTINCT d FROM Donation d LEFT JOIN d.categories c " +
+            "WHERE (:search IS NULL OR :search = '' OR " +
+            "       LOWER(d.city) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "       LOWER(d.street) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "       LOWER(d.institution.name) LIKE LOWER(CONCAT('%', :search, '%'))) " +
+            "AND (:institutionId IS NULL OR d.institution.institutionId = :institutionId) " +
+            "AND (:pickUpDate IS NULL OR d.pickUpDate = :pickUpDate) " +
+            "AND (:pickUpTime IS NULL OR d.pickUpTime = :pickUpTime) " +
+            "AND (:city IS NULL OR :city = '' OR LOWER(d.city) = LOWER(:city)) " +
+            "AND (COALESCE(:categoryIds, NULL) IS NULL OR c.categoryId IN :categoryIds)" +
+            "AND d.user = :currentUser")
+    Page<Donation> searchAndFilterDonationsForUser(@Param("search") String search,
+                                            @Param("institutionId") Long institutionId,
+                                            @Param("pickUpDate") LocalDate pickUpDate,
+                                            @Param("pickUpTime") LocalTime pickUpTime,
+                                            @Param("city") String city,
+                                            @Param("categoryIds") List<Long> categoryIds,
+                                            @Param("currentUser") User currentUser,
+                                            Pageable pageable);
 }
