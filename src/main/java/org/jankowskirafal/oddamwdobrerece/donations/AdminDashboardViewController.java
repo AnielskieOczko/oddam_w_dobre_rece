@@ -1,6 +1,5 @@
 package org.jankowskirafal.oddamwdobrerece.donations;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.jankowskirafal.oddamwdobrerece.categories.CategoryService;
 import org.jankowskirafal.oddamwdobrerece.contactform.ContactForm;
@@ -53,13 +52,13 @@ public class AdminDashboardViewController {
         logger.info(search);
         logger.info(String.valueOf(donationPage.getTotalPages()));
 
-        return "admin_donations_list";
+        return "/admin/admin_donations_list";
     }
 
     @GetMapping("/add")
     public String showDonationForm(Model model) {
         model.addAttribute("donation", new Donation());
-        return "admin_donation_form";
+        return "/admin/admin_donation_form";
     }
 
     @PostMapping("/save")
@@ -69,7 +68,7 @@ public class AdminDashboardViewController {
                                RedirectAttributes redirectAttributes
                                ) {
         if (result.hasErrors()) {
-            return "admin_donation_form";
+            return "/admin/admin_donation_form";
         }
 
         Donation donation = adminDonationFormDto.donation();
@@ -107,7 +106,7 @@ public class AdminDashboardViewController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Donation not found.");
         }
 
-        return "admin_donation_form";
+        return "/admin/admin_donation_form";
     }
 
     @PostMapping("/delete/{id}")

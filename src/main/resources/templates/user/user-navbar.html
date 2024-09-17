@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+
+<nav class="admin-navbar" th:fragment="user-nav">
+    <div class="navbar-brand">User Panel</div>
+    <ul class="navbar-menu">
+        <li><a th:href="@{/user/donations}"><i class="fas fa-tachometer-alt"></i> Podarunki</a></li>
+        <li><a th:href="@{/user/account}"><i class="fas fa-users"></i> Moje konto</a></li>
+    </ul>
+</nav>
+</html>

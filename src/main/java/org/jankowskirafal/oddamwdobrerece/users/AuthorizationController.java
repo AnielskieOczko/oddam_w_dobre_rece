@@ -38,7 +38,7 @@ public class AuthorizationController {
 
     @GetMapping("/login")
     public String showLoginForm(Model model) {
-//        model.addAttribute("loginForm", new LoginDto("", ""));
+        model.addAttribute("loginForm", new LoginDto("", ""));
         return "login";
     }
 

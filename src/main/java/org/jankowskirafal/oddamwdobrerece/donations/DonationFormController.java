@@ -39,7 +39,7 @@ public class DonationFormController {
 
         model.addAttribute("donationForm", adminDonationFormDto);
 
-        return "form_default";
+        return "/donation/add-donation-form";
     }
 
     @PostMapping("/form-confirmation")
@@ -51,7 +51,7 @@ public class DonationFormController {
         model.addAttribute("donationForm", adminDonationFormDto);
         donationService.saveDonation(adminDonationFormDto.donation());
 
-        return "form-confirmation-default";
+        return "/donation/add-donation-confirmation";
     }
 
 

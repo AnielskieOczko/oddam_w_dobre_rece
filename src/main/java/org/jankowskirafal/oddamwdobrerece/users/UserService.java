@@ -1,10 +1,7 @@
 package org.jankowskirafal.oddamwdobrerece.users;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.jankowskirafal.oddamwdobrerece.donations.Donation;
 import org.jankowskirafal.oddamwdobrerece.donations.DonationRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -61,6 +57,9 @@ public class UserService {
     public List<User> getAll() {
         return userRepository.findAll();
     }
+    public Optional<User> getByEmail(String email) {
+        return userRepository.findUserByEmail(email);
+    }
 
     public void registerUser(RegistrationDto registrationDto) {
         User user = new User();
@@ -96,5 +95,12 @@ public class UserService {
         existingUser.setAuthorities(newAuthorities);
 
         userRepository.save(existingUser);
+    }
+
+    public User updateUser(User user) {
+        if (!user.getPassword().startsWith("{bcrypt}")) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        return userRepository.save(user);
     }
 }

@@ -24,7 +24,7 @@ public class HomeViewController {
         HomePageDto homePageDto = donationService.getDataForHomePage();
         model.addAttribute("homePageDto", homePageDto);
 
-        return "index";
+        return "home";
     }
 
 }

@@ -1,43 +1,32 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
-<div th:replace="~{admin-header :: admin-head (pageTitle='Zarzadzanie Instytucjami')}"></div>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="pl">
+<div th:replace="~{/user/user-header :: user-head (pageTitle='Konto użytkownika')}"></div>
 
 <body>
-<div th:replace="~{admin-navbar :: admin-nav}"></div>
+<div th:replace="~{/user/user-navbar :: user-nav}"></div>
+
 <section>
     <h2>Lista Darów</h2>
 
-<!--    <div class="action-bar">-->
-<!--        <form th:action="@{/admin/donations}" method="get" class="search-form">-->
-<!--            <input type="text" name="search" th:value="${search}" placeholder="Szukaj daru..." class="search-input"/>-->
-<!--            <button type="submit" class="btn btn-search">Szukaj</button>-->
-<!--        </form>-->
-<!--        <a th:href="@{/admin/donations/add}" class="btn btn-add">Dodaj Dar</a>-->
-<!--    </div>-->
-
     <div>
-        <form th:action="@{/admin/donations}" method="get" th:object="${filter}">
+        <form th:action="@{/user/donations}" method="get" th:object="${filter}">
             <input type="text" name="search" th:value="${search}" placeholder="Search...">
 
             <select th:field="*{institutionId}">
                 <option value="">All Institutions</option>
-                <option th:each="inst : ${institutions}" th:value="${inst.institutionId}" th:text="${inst.name}"></option>
+                <option th:each="inst : ${institutions}" th:value="${inst.institutionId}"
+                        th:text="${inst.name}"></option>
             </select>
 
-            <input type="date" th:field="*{pickUpDate}" />
-            <input type="time" th:field="*{pickUpTime}" />
+            <input type="date" th:field="*{pickUpDate}"/>
+            <input type="time" th:field="*{pickUpTime}"/>
 
-            <input type="text" th:field="*{city}" placeholder="City" />
-
-<!--            <select th:field="*{categoryIds}" multiple>-->
-<!--                <option value="" selected>All Categories</option>-->
-<!--                <option th:each="cat : ${categories}" th:value="${cat.categoryId}" th:text="${cat.name}"></option>-->
-<!--            </select>-->
+            <input type="text" th:field="*{city}" placeholder="City"/>
 
             <div class="form-group" th:each="category : ${categories}">
                 <label>
                     <input type="checkbox" name="categoryIds" th:value="${category.categoryId}"
-                           th:checked="${filter.categoryIds != null and filter.categoryIds.contains(category.categoryId)}" />
+                           th:checked="${filter.categoryIds != null and filter.categoryIds.contains(category.categoryId)}"/>
                     <span th:text="${category.name}"></span>
                 </label>
             </div>
@@ -90,11 +79,12 @@
             <td th:text="${donation.creationDateTime}"></td>
             <td th:text="${donation.updateDateTime}"></td>
             <td>
-                <a th:href="@{/admin/donations/edit/{id}(id=${donation.donationId})}" class="btn btn-edit">Edytuj</a>
-                <form th:action="@{/admin/donations/delete/{id}(id=${donation.donationId})}" method="post"
-                      style="display:inline;">
-                    <button type="submit" class="btn btn-delete"
-                            onclick="return confirm('Czy na pewno chcesz usunąć tę fundację?')">Usuń
+                <a th:href="@{/user/donations/edit/{id}(id=${donation.donationId})}" class="btn btn-add">View</a>
+                <form th:action="@{/user/donations/{donationId}/updateStatus(donationId=${donation.donationId})}"
+                      th:if="${donation.status.name == 'NEW' || donation.status.name == 'READY_FOR_PICKUP'}"
+                      method="post">
+                    <button type="submit" class="btn btn-edit"
+                            th:text="${donation.status.name == 'NEW'} ? 'Ready for pickup' : 'Picked up'">
                     </button>
                 </form>
             </td>
@@ -103,14 +93,14 @@
     </table>
 
     <div class="pagination" th:if="${totalPages > 1}">
-        <a th:href="@{/admin/donations(page=${currentPage -1}, search=${search})}" th:if="${currentPage > 1}">&laquo;
+        <a th:href="@{/user/donations(page=${currentPage -1}, search=${search})}" th:if="${currentPage > 1}">&laquo;
             Poprzednia</a>
         <span th:each="pageNumber : ${#numbers.sequence(1, totalPages)}">
-                <a th:href="@{/admin/donations(page=${pageNumber}, search=${search})}"
+                <a th:href="@{/user/donations(page=${pageNumber}, search=${search})}"
                    th:text="${pageNumber}"
                    th:class="${pageNumber==currentPage} ? 'active' : ''"></a>
             </span>
-        <a th:href="@{/admin/donations(page=${currentPage + 1}, search=${search})}" th:if="${currentPage < totalPages}">Następna
+        <a th:href="@{/user/donations(page=${currentPage + 1}, search=${search})}" th:if="${currentPage < totalPages}">Następna
             &raquo;</a>
     </div>
 </section>

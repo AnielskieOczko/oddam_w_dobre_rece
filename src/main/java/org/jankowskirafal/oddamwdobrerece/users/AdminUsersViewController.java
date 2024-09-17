@@ -37,7 +37,7 @@ public class AdminUsersViewController {
         model.addAttribute("users", usersPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("search", search);
-        return "users-list";
+        return "/admin/users-list";
     }
 
     @GetMapping({"/users/add"})
@@ -49,7 +49,7 @@ public class AdminUsersViewController {
                 .toList();
         model.addAttribute("user", user);
         model.addAttribute(ALL_AUTHORITIES, allAuthorities);
-        return "admin_add_user_form";
+        return "/admin/admin_add_user_form";
     }
 
     @PostMapping("/users/save")
@@ -76,7 +76,7 @@ public class AdminUsersViewController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
         }
 
-        return "admin_add_user_form";
+        return "/admin/admin_add_user_form";
     }
 
     @GetMapping("/admins")
@@ -89,7 +89,7 @@ public class AdminUsersViewController {
         model.addAttribute("admins", usersPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("search", search);
-        return "admins-list";
+        return "/admin/admins-list";
     }
 
     @GetMapping({"/admins/add"})
@@ -101,7 +101,7 @@ public class AdminUsersViewController {
                 .toList();
         model.addAttribute("user", user);
         model.addAttribute(ALL_AUTHORITIES, allAuthorities);
-        return "admin_add_form";
+        return "/admin/admin_add_form";
     }
 
     @PostMapping("/admins/save")
@@ -122,7 +122,7 @@ public class AdminUsersViewController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
         }
 
-        return "admin_add_form";
+        return "/admin/admin_add_form";
     }
 
     @PostMapping({"admins/delete/{id}"})
@@ -136,7 +136,7 @@ public class AdminUsersViewController {
     private String handleSaveUser(User user, BindingResult bindingResult, Model model, String redirectUrl) {
         if (bindingResult.hasErrors()) {
             model.addAttribute(ALL_AUTHORITIES, authorityService.getAllAuthorities());
-            return "admin-user-form";
+            return "/admin/admin_add_form";
         }
 
         Set<String> roleNames = user.getAuthorities().stream()
