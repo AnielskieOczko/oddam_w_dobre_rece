@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="pl" xmlns:th="http://www.thymeleaf.org">
-<div th:replace="~{admin-header :: admin-head (pageTitle='Zarzadzanie Instytucjami')}"></div>
+<div th:replace="~{/admin/admin-header :: admin-head (pageTitle='Zarzadzanie Instytucjami')}"></div>
 
 <body>
-<div th:replace="~{admin-navbar :: admin-nav}"></div>
+<div th:replace="~{/admin/admin-navbar :: admin-nav}"></div>
 <section>
     <h2>Lista Darów</h2>
 
@@ -61,6 +61,9 @@
             <th>Data odbioru</th>
             <th>Godz. odbioru</th>
             <th>Komentarz</th>
+            <th>Status</th>
+            <th>Creation date</th>
+            <th>Last update</th>
             <th>Akcje</th>
         </tr>
         </thead>
@@ -83,8 +86,11 @@
             <td th:text="${donation.pickUpDate}"></td>
             <td th:text="${donation.pickUpTime}"></td>
             <td th:text="${donation.pickUpComment}"></td>
+            <td th:text="${donation.status}"></td>
+            <td th:text="${donation.creationDateTime}"></td>
+            <td th:text="${donation.updateDateTime}"></td>
             <td>
-<!--                <a th:href="@{/admin/donations/edit/{id}(id=${donation.donationId})}" class="btn btn-edit">Edytuj</a>-->
+                <a th:href="@{/admin/donations/edit/{id}(id=${donation.donationId})}" class="btn btn-edit">Edytuj</a>
                 <form th:action="@{/admin/donations/delete/{id}(id=${donation.donationId})}" method="post"
                       style="display:inline;">
                     <button type="submit" class="btn btn-delete"

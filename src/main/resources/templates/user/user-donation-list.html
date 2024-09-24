@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="pl">
+<div th:replace="~{/user/user-header :: user-head (pageTitle='Konto użytkownika')}"></div>
+
+<body>
+<div th:replace="~{/user/user-navbar :: user-nav}"></div>
+
+<section class="container my-5">
+    <h2 class="mb-3">Lista Darów</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <form th:action="@{/user/donations}" method="get" th:object="${filter}" class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="search" th:value="${search}" placeholder="Search..." class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <select th:field="*{institutionId}" class="form-select">
+                        <option value="">All Institutions</option>
+                        <option th:each="inst : ${institutions}" th:value="${inst.institutionId}"
+                                th:text="${inst.name}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="date" th:field="*{pickUpDate}" class="form-control"/>
+                </div>
+                <div class="col-md-2">
+                    <input type="time" th:field="*{pickUpTime}" class="form-control"/>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" th:field="*{city}" placeholder="City" class="form-control"/>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-check" th:each="category : ${categories}">
+                        <input class="form-check-input" type="checkbox" name="categoryIds"
+                               th:value="${category.categoryId}"
+                               th:checked="${filter.categoryIds != null and filter.categoryIds.contains(category.categoryId)}"/>
+                        <label class="form-check-label" th:text="${category.name}"></label>
+                    </div>
+                </div>
+                <div class="col-md-12 text-end">
+                    <button type="submit" class="btn btn-primary">Apply Filters</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <table class="table table-striped mt-4">
+        <thead>
+        <tr>
+            <th>Liczba worków</th>
+            <th>Kategorie</th>
+            <th>Instytucja</th>
+            <th>Data odbioru</th>
+            <th>Godz. odbioru</th>
+            <th>Status</th>
+            <th>Creation date</th>
+            <th>Last update</th>
+            <th>Akcje</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="donation : ${donations}">
+            <td th:text="${donation.quantity}"></td>
+            <td>
+                <span th:each="category : ${donation.categories}"
+                      th:text="${category.name}"
+                      class="badge bg-secondary me-1">
+                </span>
+            </td>
+            <td th:text="${donation.institution.name}"></td>
+            <td th:text="${donation.pickUpDate}"></td>
+            <td th:text="${donation.pickUpTime}"></td>
+            <td th:text="${donation.status}"></td>
+            <td th:text="${donation.creationDateTime}"></td>
+            <td th:text="${donation.updateDateTime}"></td>
+            <td style="display: flex; flex-direction: column; align-items: start; gap: 10px;">
+                <a th:href="@{/user/donations/edit/{id}(id=${donation.donationId})}"
+                   class="btn btn-sm btn-outline-primary"
+                   style="width: 120px; text-align: center;">View</a>
+
+                <form th:action="@{/user/donations/{donationId}/updateStatus(donationId=${donation.donationId})}"
+                      th:if="${donation.status.name == 'NEW' || donation.status.name == 'READY_FOR_PICKUP'}"
+                      method="post" style="width: 120px;">
+                    <button type="submit"
+                            class="btn btn-sm btn-outline-success"
+                            style="width: 100%;"
+                            th:text="${donation.status.name == 'NEW'} ? 'Ready for pickup' : 'Picked up'">
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination justify-content-end" th:if="${totalPages > 1}">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/user/donations(page=${currentPage -1}, search=${search})}"
+                   aria-label="Previous">
+                    <span aria-hidden="true">«</span>
+                </a>
+            </li>
+            <li class="page-item" th:each="pageNumber : ${#numbers.sequence(1, totalPages)}"
+                th:classappend="${pageNumber==currentPage} ? 'active'">
+                <a class="page-link" th:href="@{/user/donations(page=${pageNumber}, search=${search})}"
+                   th:text="${pageNumber}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
+                <a class="page-link" th:href="@{/user/donations(page=${currentPage + 1}, search=${search})}"
+                   aria-label="Next">
+                    <span aria-hidden="true">»</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8QyqSbIiDf" crossorigin="anonymous"></script>
+</body>
+</html>

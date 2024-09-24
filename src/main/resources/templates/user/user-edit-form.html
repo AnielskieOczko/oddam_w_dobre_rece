@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{/user/user-header :: user-head (pageTitle='Edycja konta użytkownika')}"></div>
+<body>
+<div th:replace="~{/user/user-navbar :: user-nav}"></div>
+<section class="container my-5">
+    <h1 class="mb-4">Edycja Konta Użytkownika</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <form th:action="@{/user/edit}" th:object="${registrationDto}" method="post" class="needs-validation" novalidate>
+                <div class="row g-3">
+                    <div class="col-md-12 form-group" th:classappend="${#fields.hasErrors('email')} ? 'has-error'">
+                        <label for="email" class="form-label">Adres Email:</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                        <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback d-block">
+                            <span th:errors="*{email}"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 form-group" th:classappend="${#fields.hasErrors('password')} ? 'has-error'">
+                        <label for="password" class="form-label">Nowe Hasło (pozostaw puste, aby zachować aktualne):</label>
+                        <input type="password" class="form-control" id="password" th:field="*{password}">
+                        <div th:if="${#fields.hasErrors('password')}" class="invalid-feedback d-block">
+                            <span th:errors="*{password}"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 form-group" th:classappend="${#fields.hasErrors('confirmPassword')} ? 'has-error'">
+                        <label for="confirmPassword" class="form-label">Potwierdź Nowe Hasło:</label>
+                        <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}">
+                        <div th:if="${#fields.hasErrors('confirmPassword')}" class="invalid-feedback d-block">
+                            <span th:errors="*{confirmPassword}"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-end">
+                        <button type="submit" class="btn btn-primary">Zaktualizuj Konto</button>
+                    </div>
+                </div>
+            </form>
+
+            <a href="/user/account" class="btn btn-secondary mt-3">Powrót do Szczegółów Konta</a>
+        </div>
+    </div>
+</section>
+</body>
+</html>

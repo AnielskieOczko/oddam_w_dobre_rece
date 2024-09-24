@@ -30,14 +30,14 @@ public class InstitutionAdminViewController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", institutionPage.getTotalPages());
         model.addAttribute("search", search);
-        return "institutions-list";
+        return "/institution/institutions-list";
     }
 
 
     @GetMapping("/add")
     public String showInstitutionForm(Model model) {
         model.addAttribute("institution", new Institution());
-        return "institution-form";
+        return "/institution/institution-form";
     }
 
     @PostMapping("/save")
@@ -45,7 +45,7 @@ public class InstitutionAdminViewController {
                                   BindingResult result,
                                   RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            return "institution-form";
+            return "/institution/institution-form";
         }
 
         if (institution.getInstitutionId() == null) {
@@ -70,7 +70,7 @@ public class InstitutionAdminViewController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Institution not found.");
         }
 
-        return "institution-form";
+        return "/institution/institution-form";
     }
 
     @PostMapping("/delete/{id}")

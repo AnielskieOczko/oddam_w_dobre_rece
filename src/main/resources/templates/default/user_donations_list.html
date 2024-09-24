@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="pl">
+<div th:replace="~{/user/user-header :: user-head (pageTitle='Konto użytkownika')}"></div>
+
+<body>
+<div th:replace="~{/user/user-navbar :: user-nav}"></div>
+
+<section>
+    <h2>Lista Darów</h2>
+
+    <div>
+        <form th:action="@{/user/donations}" method="get" th:object="${filter}">
+            <input type="text" name="search" th:value="${search}" placeholder="Search...">
+
+            <select th:field="*{institutionId}">
+                <option value="">All Institutions</option>
+                <option th:each="inst : ${institutions}" th:value="${inst.institutionId}"
+                        th:text="${inst.name}"></option>
+            </select>
+
+            <input type="date" th:field="*{pickUpDate}"/>
+            <input type="time" th:field="*{pickUpTime}"/>
+
+            <input type="text" th:field="*{city}" placeholder="City"/>
+
+            <div class="form-group" th:each="category : ${categories}">
+                <label>
+                    <input type="checkbox" name="categoryIds" th:value="${category.categoryId}"
+                           th:checked="${filter.categoryIds != null and filter.categoryIds.contains(category.categoryId)}"/>
+                    <span th:text="${category.name}"></span>
+                </label>
+            </div>
+
+            <button type="submit">Apply Filters</button>
+        </form>
+    </div>
+
+    <table class="admin-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Liczba worków;</th>
+            <th>Kategorie</th>
+            <th>Instytucja</th>
+            <th>Użytkownik</th>
+            <th>Ulica</th>
+            <th>kod pocztowy</th>
+            <th>Miasto</th>
+            <th>Nr. kontaktowy</th>
+            <th>Data odbioru</th>
+            <th>Godz. odbioru</th>
+            <th>Komentarz</th>
+            <th>Status</th>
+            <th>Creation date</th>
+            <th>Last update</th>
+            <th>Akcje</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="donation : ${donations}">
+            <td th:text="${donation.donationId}"></td>
+            <td th:text="${donation.quantity}"></td>
+            <td>
+                  <span th:each="category : ${donation.categories}"
+                        th:text="${category.name}"
+                        class="category-name">
+                </span>
+            </td>
+            <td th:text="${donation.institution.name}"></td>
+            <td th:text="${donation.user != null ? donation.user.getEmail() : 'guest' }"></td>
+            <td th:text="${donation.street}"></td>
+            <td th:text="${donation.zip}"></td>
+            <td th:text="${donation.city}"></td>
+            <td th:text="${donation.phone}"></td>
+            <td th:text="${donation.pickUpDate}"></td>
+            <td th:text="${donation.pickUpTime}"></td>
+            <td th:text="${donation.pickUpComment}"></td>
+            <td th:text="${donation.status}"></td>
+            <td th:text="${donation.creationDateTime}"></td>
+            <td th:text="${donation.updateDateTime}"></td>
+            <td>
+                <a th:href="@{/user/donations/edit/{id}(id=${donation.donationId})}" class="btn btn-add">View</a>
+                <form th:action="@{/user/donations/{donationId}/updateStatus(donationId=${donation.donationId})}"
+                      th:if="${donation.status.name == 'NEW' || donation.status.name == 'READY_FOR_PICKUP'}"
+                      method="post">
+                    <button type="submit" class="btn btn-edit"
+                            th:text="${donation.status.name == 'NEW'} ? 'Ready for pickup' : 'Picked up'">
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination" th:if="${totalPages > 1}">
+        <a th:href="@{/user/donations(page=${currentPage -1}, search=${search})}" th:if="${currentPage > 1}">&laquo;
+            Poprzednia</a>
+        <span th:each="pageNumber : ${#numbers.sequence(1, totalPages)}">
+                <a th:href="@{/user/donations(page=${pageNumber}, search=${search})}"
+                   th:text="${pageNumber}"
+                   th:class="${pageNumber==currentPage} ? 'active' : ''"></a>
+            </span>
+        <a th:href="@{/user/donations(page=${currentPage + 1}, search=${search})}" th:if="${currentPage < totalPages}">Następna
+            &raquo;</a>
+    </div>
+</section>
+</body>
+</html>

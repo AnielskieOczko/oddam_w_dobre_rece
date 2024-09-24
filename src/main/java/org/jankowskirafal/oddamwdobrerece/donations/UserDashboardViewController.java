@@ -1,6 +1,8 @@
 package org.jankowskirafal.oddamwdobrerece.donations;
 
+
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jankowskirafal.oddamwdobrerece.categories.CategoryService;
 import org.jankowskirafal.oddamwdobrerece.contactform.ContactForm;
 import org.jankowskirafal.oddamwdobrerece.dtos.AdminDonationFormDto;
@@ -9,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,30 +19,26 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 
 @Controller
 @AllArgsConstructor
-@RequestMapping("/admin/donations")
-public class AdminDashboardViewController {
+@RequestMapping("/user/donations")
+@Slf4j
+public class UserDashboardViewController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AdminDashboardViewController.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserDashboardViewController.class);
     private final DonationService donationService;
     private final InstitutionService institutionService;
     private final CategoryService categoryService;
 
-    @GetMapping
-    public String displayDonationList(Model model,
-                                      @ModelAttribute DonationFilterDTO donationFilterDTO,
-                                      @RequestParam(defaultValue = "1") int page,
-                                      @RequestParam(defaultValue = "5") int size,
-                                      @RequestParam(required = false, defaultValue = "") String search) {
 
-        Page<Donation> donationPage = donationService.getDonations(search,
-                donationFilterDTO,
-                page - 1,
-                size);
+    @GetMapping()
+    public String displayDonationList2(Model model, @ModelAttribute DonationFilterDTO donationFilterDTO, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size, @RequestParam(required = false, defaultValue = "") String search) {
+
+        Page<Donation> donationPage = donationService.getDonations(search, donationFilterDTO, page - 1, size);
 
         model.addAttribute("donations", donationPage.getContent());
         model.addAttribute("institutions", institutionService.getAllInstitutionsForDropdown());
@@ -48,27 +47,15 @@ public class AdminDashboardViewController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", donationPage.getTotalPages());
         model.addAttribute("search", search);
-        logger.info("listInstitutions");
-        logger.info(search);
-        logger.info(String.valueOf(donationPage.getTotalPages()));
+        log.info("Logged in user: {}", SecurityContextHolder.getContext().getAuthentication().getName());
 
-        return "/admin/admin_donations_list";
-    }
-
-    @GetMapping("/add")
-    public String showDonationForm(Model model) {
-        model.addAttribute("donation", new Donation());
-        return "/admin/admin_donation_form";
+        return "/user/user-donation-list";
     }
 
     @PostMapping("/save")
-    public String saveDonation(Model model,
-                               @ModelAttribute("donationForm") AdminDonationFormDto adminDonationFormDto,
-                               BindingResult result,
-                               RedirectAttributes redirectAttributes
-                               ) {
+    public String saveDonation(Model model, @ModelAttribute("donationForm") AdminDonationFormDto adminDonationFormDto, BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            return "/admin/admin_donation_form";
+            return "/user/user_donation_form";
         }
 
         Donation donation = adminDonationFormDto.donation();
@@ -80,7 +67,7 @@ public class AdminDashboardViewController {
         }
 
         redirectAttributes.addFlashAttribute("message", "Dar został pomyślnie zapisany.");
-        return "redirect:/admin/donations";
+        return "redirect:/user/donations";
     }
 
     @GetMapping("/edit/{id}")
@@ -106,14 +93,25 @@ public class AdminDashboardViewController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Donation not found.");
         }
 
-        return "/admin/admin_donation_form";
+        return "/user/user_donation_form";
     }
 
-    @PostMapping("/delete/{id}")
-    public String deleteInstitution(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        donationService.deleteDonation(id);
-        redirectAttributes.addFlashAttribute("message", "Dar została usunięta.");
-        return "redirect:/admin/donations";
+    @PostMapping("/{donationId}/updateStatus")
+    public String updateDonationStatus(@PathVariable Long donationId) {
+
+        Optional<Donation> donation = donationService.getDonationById(donationId);
+        // ... (Authorization check: Make sure the logged-in user owns the donation) ...
+
+        if (donation.isPresent()) {
+            if (donation.get().getStatus() == DonationStatus.NEW) {
+                donation.get().setStatus(DonationStatus.READY_FOR_PICKUP);
+            } else if (donation.get().getStatus() == DonationStatus.READY_FOR_PICKUP) {
+                donation.get().setStatus(DonationStatus.PICKED_UP);
+            }
+            donationService.updateDonationStatus(donation.get());
+        }
+
+        return "redirect:/user/donations"; // Redirect to the user's donations page
     }
-    
+
 }

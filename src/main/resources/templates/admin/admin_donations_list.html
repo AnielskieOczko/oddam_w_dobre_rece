@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{/admin/admin-header :: admin-head (pageTitle='Zarzadzanie Darami')}"></div>
+
+<body>
+<div th:replace="~{/admin/admin-navbar :: admin-nav}"></div>
+<section class="container my-5">
+    <h2 class="mb-4"><i class="fas fa-gift"></i> Lista Darów</h2>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <form th:action="@{/admin/donations}" method="get" th:object="${filter}" class="d-flex">
+                        <input type="text" name="search" th:value="${search}" placeholder="Szukaj daru..." class="form-control me-2"/>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Szukaj</button>
+                    </form>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <a th:href="@{/admin/donations/add}" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Dodaj Dar
+                    </a>
+                </div>
+            </div>
+
+            <form th:action="@{/admin/donations}" method="get" th:object="${filter}" class="mt-4 row g-3">
+                <div class="col-md-4">
+                    <select th:field="*{institutionId}" class="form-select">
+                        <option value="">Wszystkie instytucje</option>
+                        <option th:each="inst : ${institutions}" th:value="${inst.institutionId}" th:text="${inst.name}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="date" th:field="*{pickUpDate}" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <input type="time" th:field="*{pickUpTime}" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <input type="text" th:field="*{city}" placeholder="Miasto" class="form-control" />
+                </div>
+                <div class="col-12">
+                    <div class="form-group" th:each="category : ${categories}">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="categoryIds" th:value="${category.categoryId}"
+                                   th:checked="${filter.categoryIds != null and filter.categoryIds.contains(category.categoryId)}" />
+                            <label class="form-check-label" th:text="${category.name}"></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 text-end">
+                    <button type="submit" class="btn btn-primary">Zastosuj filtry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+            <tr>
+                <th><i class="fas fa-hashtag"></i> ID</th>
+                <th><i class="fas fa-boxes"></i> Liczba worków</th>
+                <th><i class="fas fa-tags"></i> Kategorie</th>
+                <th><i class="fas fa-building"></i> Instytucja</th>
+                <th><i class="fas fa-user"></i> Użytkownik</th>
+                <th><i class="fas fa-home"></i> Ulica</th>
+                <th><i class="fas fa-map-marker-alt"></i> Kod pocztowy</th>
+                <th><i class="fas fa-city"></i> Miasto</th>
+                <th><i class="fas fa-phone"></i> Nr. kontaktowy</th>
+                <th><i class="fas fa-calendar-alt"></i> Data odbioru</th>
+                <th><i class="fas fa-clock"></i> Godz. odbioru</th>
+                <th><i class="fas fa-comment"></i> Komentarz</th>
+                <th><i class="fas fa-info-circle"></i> Status</th>
+                <th><i class="fas fa-calendar-plus"></i> Data utworzenia</th>
+                <th><i class="fas fa-history"></i> Data aktualizacji</th>
+                <th><i class="fas fa-cogs"></i> Akcje</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="donation : ${donations}">
+                <td th:text="${donation.donationId}"></td>
+                <td th:text="${donation.quantity}"></td>
+                <td>
+                    <span th:each="category : ${donation.categories}"
+                          th:text="${category.name}"
+                          class="badge bg-secondary me-1"> </span>
+                </td>
+                <td th:text="${donation.institution.name}"></td>
+                <td th:text="${donation.user != null ? donation.user.getEmail() : 'Gość'}"></td>
+                <td th:text="${donation.street}"></td>
+                <td th:text="${donation.zip}"></td>
+                <td th:text="${donation.city}"></td>
+                <td th:text="${donation.phone}"></td>
+                <td th:text="${donation.pickUpDate}"></td>
+                <td th:text="${donation.pickUpTime}"></td>
+                <td th:text="${donation.pickUpComment}"></td>
+                <td th:text="${donation.status}"></td>
+                <td th:text="${donation.creationDateTime}"></td>
+                <td th:text="${donation.updateDateTime}"></td>
+                <td>
+                    <a th:href="@{/admin/donations/edit/{id}(id=${donation.donationId})}" class="btn btn-sm btn-outline-primary me-2">
+                        <i class="fas fa-edit"></i> Edytuj
+                    </a>
+                    <form th:action="@{/admin/donations/delete/{id}(id=${donation.donationId})}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('Czy na pewno chcesz usunąć ten dar?')">
+                            <i class="fas fa-trash-alt"></i> Usuń
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <nav aria-label="Page navigation" th:if="${totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/donations(page=${currentPage - 1}, search=${search})}" aria-label="Previous">
+                    <span aria-hidden="true">«</span>
+                </a>
+            </li>
+            <li class="page-item" th:each="pageNumber : ${#numbers.sequence(1, totalPages)}"
+                th:classappend="${pageNumber==currentPage} ? 'active'">
+                <a class="page-link" th:href="@{/admin/donations(page=${pageNumber}, search=${search})}"
+                   th:text="${pageNumber}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/donations(page=${currentPage + 1}, search=${search})}" aria-label="Next">
+                    <span aria-hidden="true">»</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</section>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8QyqSbIiDf" crossorigin="anonymous"></script>
+</body>
+</html>

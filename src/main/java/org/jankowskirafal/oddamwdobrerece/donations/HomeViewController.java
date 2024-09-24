@@ -20,10 +20,11 @@ public class HomeViewController {
     public String displayHomePage(Model model) {
         log.info("Displaying home page");
 
+
         HomePageDto homePageDto = donationService.getDataForHomePage();
         model.addAttribute("homePageDto", homePageDto);
 
-        return "index";
+        return "home";
     }
 
 }

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{/admin/admin-header :: admin-head (pageTitle='Zarządzanie Użytkownikami')}"></div>
+
+<body>
+<div th:replace="~{/admin/admin-navbar :: admin-nav}"></div>
+<section class="container my-5">
+    <h2 class="mb-4"><i class="fas fa-users"></i> Lista Użytkowników</h2>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <form th:action="@{/admin/users}" method="get" class="d-flex">
+                        <input type="text" name="search" th:value="${search}" placeholder="Szukaj użytkownika..." class="form-control me-2"/>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Szukaj</button>
+                    </form>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <a th:href="@{/admin/users/add}" class="btn btn-success">
+                        <i class="fas fa-user-plus"></i> Dodaj Użytkownika
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+            <tr>
+                <th><i class="fas fa-hashtag"></i> ID</th>
+                <th><i class="fas fa-envelope"></i> Email</th>
+                <th><i class="fas fa-user-shield"></i> Role</th>
+<!--                <th><i class="fas fa-toggle-on"></i> Stan</th>-->
+                <th><i class="fas fa-cogs"></i> Akcje</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.email}"></td>
+                <td>
+                    <span th:each="authority : ${user.authorities}"
+                          th:text="${authority.name}"
+                          class="badge bg-secondary me-1"></span>
+                </td>
+<!--                <td th:text="${user.enabled ? 'Aktywny' : 'Nieaktywny'}"></td>-->
+                <td>
+                    <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="btn btn-sm btn-outline-primary me-2">
+                        <i class="fas fa-edit"></i> Edytuj
+                    </a>
+                    <form th:action="@{/admin/users/delete/{id}(id=${user.id})}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('Czy na pewno chcesz usunąć tego użytkownika?')">
+                            <i class="fas fa-trash-alt"></i> Usuń
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <nav aria-label="Page navigation" th:if="${totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/users(page=${currentPage - 1}, search=${search})}" aria-label="Previous">
+                    <span aria-hidden="true">«</span>
+                </a>
+            </li>
+            <li class="page-item" th:each="pageNumber : ${#numbers.sequence(1, totalPages)}"
+                th:classappend="${pageNumber==currentPage} ? 'active'">
+                <a class="page-link" th:href="@{/admin/users(page=${pageNumber}, search=${search})}"
+                   th:text="${pageNumber}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/users(page=${currentPage + 1}, search=${search})}" aria-label="Next">
+                    <span aria-hidden="true">»</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</section>
+</body>
+</html>

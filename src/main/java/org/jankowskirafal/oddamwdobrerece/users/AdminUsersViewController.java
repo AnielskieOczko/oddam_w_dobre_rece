@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class AdminUsersViewController {
 
     private final AuthorityService authorityService;
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
     private static final String ROLE_USER = "ROLE_USER";
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
     private static final String ALL_AUTHORITIES = "allAuthorities";
@@ -33,11 +33,11 @@ public class AdminUsersViewController {
                             @RequestParam(defaultValue = "10") int size,
                             @RequestParam(required = false) String search) {
 
-        Page<User> usersPage = userService.getAllUsersByRoleName(page, size, ROLE_USER);
+        Page<User> usersPage = userServiceImpl.getAllUsersByRoleName(page, size, ROLE_USER);
         model.addAttribute("users", usersPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("search", search);
-        return "users-list";
+        return "/admin/users-list";
     }
 
     @GetMapping({"/users/add"})
@@ -49,7 +49,7 @@ public class AdminUsersViewController {
                 .toList();
         model.addAttribute("user", user);
         model.addAttribute(ALL_AUTHORITIES, allAuthorities);
-        return "admin_add_user_form";
+        return "/admin/admin_add_user_form";
     }
 
     @PostMapping("/users/save")
@@ -59,7 +59,7 @@ public class AdminUsersViewController {
 
     @PostMapping({"users/delete/{id}"})
     public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        userService.deleteUserById(id);
+        userServiceImpl.deleteUserById(id);
         redirectAttributes.addFlashAttribute("message", "Użytkownik został usunięty.");
         return "redirect:/admin/users";
     }
@@ -68,15 +68,15 @@ public class AdminUsersViewController {
     public String displayEditUserForm(@PathVariable Long id, Model model) {
 
         model.addAttribute(ALL_AUTHORITIES, authorityService.getAllAuthorities());
-        Optional<User> user = userService.getUserById(id);
+        Optional<User> user = userServiceImpl.getUserById(id);
 
         if (user.isPresent()) {
-            model.addAttribute("user", user);
+            model.addAttribute("user", user.get());
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
         }
 
-        return "admin_add_user_form";
+        return "/admin/admin_add_user_form";
     }
 
     @GetMapping("/admins")
@@ -85,11 +85,11 @@ public class AdminUsersViewController {
                              @RequestParam(defaultValue = "10") int size,
                              @RequestParam(required = false) String search) {
 
-        Page<User> usersPage = userService.getAllUsersByRoleName(page, size, ROLE_ADMIN);
+        Page<User> usersPage = userServiceImpl.getAllUsersByRoleName(page, size, ROLE_ADMIN);
         model.addAttribute("admins", usersPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("search", search);
-        return "admins-list";
+        return "/admin/admins-list";
     }
 
     @GetMapping({"/admins/add"})
@@ -101,7 +101,7 @@ public class AdminUsersViewController {
                 .toList();
         model.addAttribute("user", user);
         model.addAttribute(ALL_AUTHORITIES, allAuthorities);
-        return "admin_add_form";
+        return "/admin/admin_add_form";
     }
 
     @PostMapping("/admins/save")
@@ -114,20 +114,20 @@ public class AdminUsersViewController {
 
         model.addAttribute(ALL_AUTHORITIES, authorityService.getAllAuthorities());
 
-        Optional<User> user = userService.getUserById(id);
+        Optional<User> user = userServiceImpl.getUserById(id);
 
         if (user.isPresent()) {
-            model.addAttribute("user", user);
+            model.addAttribute("user", user.get());
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
         }
 
-        return "admin_add_form";
+        return "/admin/admin_add_form";
     }
 
     @PostMapping({"admins/delete/{id}"})
     public String deleteAdmin(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        userService.deleteUserById(id);
+        userServiceImpl.deleteUserById(id);
         redirectAttributes.addFlashAttribute("message", "Użytkownik został usunięty.");
         return "redirect:/admin/admins";
     }
@@ -136,7 +136,7 @@ public class AdminUsersViewController {
     private String handleSaveUser(User user, BindingResult bindingResult, Model model, String redirectUrl) {
         if (bindingResult.hasErrors()) {
             model.addAttribute(ALL_AUTHORITIES, authorityService.getAllAuthorities());
-            return "admin-user-form";
+            return "/admin/admin_add_form";
         }
 
         Set<String> roleNames = user.getAuthorities().stream()
@@ -144,9 +144,9 @@ public class AdminUsersViewController {
                 .collect(Collectors.toSet());
 
         if (user.getId() == null) {
-            userService.createUser(user, roleNames);
+            userServiceImpl.createUser(user, roleNames);
         } else {
-            userService.updateUser(user, roleNames);
+            userServiceImpl.updateUser(user, roleNames);
         }
 
         return "redirect:" + redirectUrl;

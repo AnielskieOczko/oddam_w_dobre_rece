@@ -11,6 +11,7 @@ import org.jankowskirafal.oddamwdobrerece.institutions.Institution;
 import org.jankowskirafal.oddamwdobrerece.users.User;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,9 @@ public class Donation {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Enumerated(EnumType.STRING)
+    DonationStatus status = DonationStatus.NEW; // default for new donation
+
 //    @NotBlank(message = "Street is required")
     String street;
     String city;
@@ -57,5 +61,7 @@ public class Donation {
     LocalDate pickUpDate;
     LocalTime pickUpTime;
     String pickUpComment;
+    LocalDateTime creationDateTime = LocalDateTime.now();
+    LocalDateTime updateDateTime;
 
 }

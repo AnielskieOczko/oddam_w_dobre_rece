@@ -2,8 +2,6 @@ package org.jankowskirafal.oddamwdobrerece.users;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @AllArgsConstructor
 public class AuthorizationController {
 
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
 
 
     @GetMapping("/register")
@@ -32,13 +30,13 @@ public class AuthorizationController {
             return "register";
         }
 
-        userService.registerUser(registrationDto);
+        userServiceImpl.registerUser(registrationDto);
         return "redirect:/donations/add";
     }
 
     @GetMapping("/login")
     public String showLoginForm(Model model) {
-//        model.addAttribute("loginForm", new LoginDto("", ""));
+        model.addAttribute("loginForm", new LoginDto("", ""));
         return "login";
     }
 

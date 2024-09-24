@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{/user/user-header :: user-head (pageTitle='Konto użytkownika')}"></div>
+<body>
+<div th:replace="~{/user/user-navbar :: user-nav}"></div>
+<div class="container mt-5">
+    <h1 class="mb-4">User Account Details</h1>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title" th:text="${user.email}">user@example.com</h5>
+            <p class="card-text">
+                <strong>ID:</strong> <span th:text="${user.id}">1</span><br>
+                <strong>Active:</strong> <span th:text="${user.active ? 'Yes' : 'No'}">Yes</span><br>
+                <strong>Roles:</strong>
+                <span th:each="authority : ${user.authorities}" th:text="${authority.name} + ' '">ROLE_USER</span>
+            </p>
+        </div>
+    </div>
+    <a th:href="@{/}" class="btn btn-primary mt-3">Back to home</a>
+    <a th:href="@{/user/edit}" class="btn btn-secondary mt-3">Edit</a>
+</div>
+</body>
+</html>

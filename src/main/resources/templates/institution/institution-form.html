@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:replace="~{/admin/admin-header :: admin-head (pageTitle='Dodawanie/edycja instytucji')}"></div>
+
+<body>
+<div th:replace="~{/admin/admin-navbar :: admin-nav}"></div>
+<section class="container my-5">
+    <h2 class="mb-4" th:text="${institution.institutionId != null} ? 'Edycja Instytucji' : 'Dodawanie Instytucji'">
+    </h2>
+
+    <div class="card">
+        <div class="card-body">
+            <form th:action="@{/admin/institutions/save}" method="post" th:object="${institution}" class="needs-validation"
+                  novalidate>
+                <input type="hidden" th:field="*{institutionId}">
+
+                <div class="row g-3">
+                    <div class="col-md-12 form-group" th:classappend="${#fields.hasErrors('name')} ? 'has-error'">
+                        <label for="name" class="form-label">Nazwa:</label>
+                        <input type="text" th:field="*{name}" id="name" class="form-control" required>
+                        <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback d-block">
+                            <span th:errors="*{name}"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 form-group"
+                         th:classappend="${#fields.hasErrors('description')} ? 'has-error'">
+                        <label for="description" class="form-label">Opis:</label>
+                        <textarea th:field="*{description}" id="description" class="form-control"
+                                  required></textarea>
+                        <div th:if="${#fields.hasErrors('description')}" class="invalid-feedback d-block">
+                            <span th:errors="*{description}"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-end">
+                        <button type="submit" class="btn btn-primary">Zapisz instytucję</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+</body>
+</html>

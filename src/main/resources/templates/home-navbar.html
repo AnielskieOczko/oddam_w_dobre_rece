@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<nav class="container container--70" th:fragment="home-nav">
+    <ul class="nav--actions" >
+        <li sec:authorize="!isAuthenticated()">
+            <a th:href="@{/login}" class="btn btn--small btn--without-border">Zaloguj</a>
+        </li>
+        <li sec:authorize="!isAuthenticated()">
+            <a th:href="@{/register}" class="btn btn--small btn--highlighted">Załóż konto</a>
+        </li>
+        <li class="logged-user" sec:authorize="isAuthenticated()">
+        <span class="btn btn--small btn--without-border">
+            Witaj, <span sec:authentication="name"></span>!
+        </span>
+            <ul class="dropdown">
+                <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a class="nav-link" th:href="@{/admin/donations}"><i class="fas fa-user-shield"></i> Panel Admina</a>
+                </li>
+                <li class="nav-item" sec:authorize="!hasRole('ROLE_ADMIN')">
+                    <a class="nav-link" th:href="@{/user/account}"><i class="fas fa-user"></i> Profil</a>
+                </li>
+                <li class="nav-item" sec:authorize="!hasRole('ROLE_ADMIN')">
+                    <a class="nav-link" th:href="@{/user/donations}"><i class="fas fa-user"></i> Moje zbiórki</a>
+                </li>
+<!--                <li><a th:href="@{/logout}">Wyloguj</a></li>-->
+                <li>
+                    <form th:action="@{/logout}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn--small btn--highlighted">Wyloguj</button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+<!--        <li sec:authorize="isAuthenticated()">-->
+<!--            <form th:action="@{/logout}" method="post" style="display: inline;">-->
+<!--                <button type="submit" class="btn btn&#45;&#45;small btn&#45;&#45;highlighted">Wyloguj</button>-->
+<!--            </form>-->
+<!--        </li>-->
+    </ul>
+
+    <ul>
+        <li><a th:href="@{/}" class="btn btn--without-border active">Start</a></li>
+        <li><a href="#steps" class="btn btn--without-border">O co chodzi?</a></li>
+        <li><a href="#about-us" class="btn btn--without-border">O nas</a></li>
+        <li><a href="#help" class="btn btn--without-border">Fundacje i organizacje</a></li>
+        <li><a th:href="@{/donations/add}" class="btn btn--without-border">Przekaż dary</a></li>
+        <li><a href="#contact" class="btn btn--without-border">Kontakt</a></li>
+    </ul>
+</nav>
+</html>
