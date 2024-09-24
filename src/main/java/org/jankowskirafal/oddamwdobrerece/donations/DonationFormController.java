@@ -3,10 +3,13 @@ package org.jankowskirafal.oddamwdobrerece.donations;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jankowskirafal.oddamwdobrerece.categories.CategoryService;
+import org.jankowskirafal.oddamwdobrerece.categories.CategoryServiceImpl;
 import org.jankowskirafal.oddamwdobrerece.contactform.ContactForm;
 import org.jankowskirafal.oddamwdobrerece.dtos.AdminDonationFormDto;
+import org.jankowskirafal.oddamwdobrerece.institutions.InstitutionService;
 import org.jankowskirafal.oddamwdobrerece.institutions.InstitutionServiceImpl;
 import org.jankowskirafal.oddamwdobrerece.users.User;
+import org.jankowskirafal.oddamwdobrerece.users.UserService;
 import org.jankowskirafal.oddamwdobrerece.users.UserServiceImpl;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,17 +29,17 @@ import java.util.Optional;
 @Slf4j
 public class DonationFormController {
 
-    private final DonationService donationService;
-    private final CategoryService categoryService;
-    private final InstitutionServiceImpl institutionServiceImpl;
-    private final UserServiceImpl userServiceImpl;
+    private final DonationService donationServiceImpl;
+    private final CategoryService categoryServiceImpl;
+    private final InstitutionService institutionServiceImpl;
+    private final UserService userServiceImpl;
 
 
     @GetMapping("/add")
     public String displayDonationAddForm(Model model) {
 
         AdminDonationFormDto adminDonationFormDto = new AdminDonationFormDto(
-                categoryService.getAllCategories(),
+                categoryServiceImpl.getAllCategories(),
                 institutionServiceImpl.getAll(),
                 Arrays.stream(DonationStatus.values()).toList(),
                 new Donation(),
@@ -58,13 +61,13 @@ public class DonationFormController {
         // Check if the user is logged in
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
 
-            Optional<User> userOptional = userServiceImpl.getByEmail(userDetails.getUsername());
+            Optional<User> userOptional = userServiceImpl.findUserByEmail(userDetails.getUsername());
             userOptional.ifPresent(user -> adminDonationFormDto.donation().setUser(user));
 
         }
 
         model.addAttribute("donationForm", adminDonationFormDto);
-        donationService.saveDonation(adminDonationFormDto.donation());
+        donationServiceImpl.saveDonation(adminDonationFormDto.donation());
 
         return "/donation/add-donation-confirmation";
     }

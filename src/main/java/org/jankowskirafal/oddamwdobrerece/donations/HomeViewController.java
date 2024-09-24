@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @AllArgsConstructor
 public class HomeViewController {
 
-    private final DonationService donationService;
+    private final DonationService donationServiceImpl;
 
     @GetMapping()
     public String displayHomePage(Model model) {
         log.info("Displaying home page");
 
 
-        HomePageDto homePageDto = donationService.getDataForHomePage();
+        HomePageDto homePageDto = donationServiceImpl.getDataForHomePage();
         model.addAttribute("homePageDto", homePageDto);
 
         return "home";

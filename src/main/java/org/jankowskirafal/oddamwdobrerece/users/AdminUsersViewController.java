@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class AdminUsersViewController {
 
     private final AuthorityService authorityService;
-    private final UserServiceImpl userServiceImpl;
+    private final UserService userServiceImpl;
     private static final String ROLE_USER = "ROLE_USER";
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
     private static final String ALL_AUTHORITIES = "allAuthorities";

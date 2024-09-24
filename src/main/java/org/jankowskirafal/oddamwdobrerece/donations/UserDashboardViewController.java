@@ -4,6 +4,7 @@ package org.jankowskirafal.oddamwdobrerece.donations;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jankowskirafal.oddamwdobrerece.categories.CategoryService;
+import org.jankowskirafal.oddamwdobrerece.categories.CategoryServiceImpl;
 import org.jankowskirafal.oddamwdobrerece.contactform.ContactForm;
 import org.jankowskirafal.oddamwdobrerece.dtos.AdminDonationFormDto;
 import org.jankowskirafal.oddamwdobrerece.institutions.InstitutionService;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -30,19 +30,19 @@ import java.util.Optional;
 public class UserDashboardViewController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDashboardViewController.class);
-    private final DonationService donationService;
+    private final DonationService donationServiceImpl;
     private final InstitutionService institutionService;
-    private final CategoryService categoryService;
+    private final CategoryService categoryServiceImpl;
 
 
     @GetMapping()
     public String displayDonationList2(Model model, @ModelAttribute DonationFilterDTO donationFilterDTO, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size, @RequestParam(required = false, defaultValue = "") String search) {
 
-        Page<Donation> donationPage = donationService.getDonations(search, donationFilterDTO, page - 1, size);
+        Page<Donation> donationPage = donationServiceImpl.getDonations(search, donationFilterDTO, page - 1, size);
 
         model.addAttribute("donations", donationPage.getContent());
         model.addAttribute("institutions", institutionService.getAllInstitutionsForDropdown());
-        model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("categories", categoryServiceImpl.getAllCategories());
         model.addAttribute("filter", donationFilterDTO);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", donationPage.getTotalPages());
@@ -61,9 +61,9 @@ public class UserDashboardViewController {
         Donation donation = adminDonationFormDto.donation();
 
         if (donation.getDonationId() == null) {
-            donationService.saveDonation(donation);
+            donationServiceImpl.saveDonation(donation);
         } else {
-            donationService.updateDonation(donation);
+            donationServiceImpl.updateDonation(donation);
         }
 
         redirectAttributes.addFlashAttribute("message", "Dar został pomyślnie zapisany.");
@@ -73,11 +73,11 @@ public class UserDashboardViewController {
     @GetMapping("/edit/{id}")
     public String showEditDonationForm(@PathVariable Long id, Model model) {
 
-        Optional<Donation> donation = donationService.getDonationById(id);
+        Optional<Donation> donation = donationServiceImpl.getDonationById(id);
 
         if (donation.isPresent()) {
             AdminDonationFormDto adminDonationFormDto = new AdminDonationFormDto(
-                    categoryService.getAllCategories(),
+                    categoryServiceImpl.getAllCategories(),
                     institutionService.getAll(),
                     Arrays.stream(DonationStatus.values()).toList(),
                     donation.get(),
@@ -99,7 +99,7 @@ public class UserDashboardViewController {
     @PostMapping("/{donationId}/updateStatus")
     public String updateDonationStatus(@PathVariable Long donationId) {
 
-        Optional<Donation> donation = donationService.getDonationById(donationId);
+        Optional<Donation> donation = donationServiceImpl.getDonationById(donationId);
         // ... (Authorization check: Make sure the logged-in user owns the donation) ...
 
         if (donation.isPresent()) {
@@ -108,7 +108,7 @@ public class UserDashboardViewController {
             } else if (donation.get().getStatus() == DonationStatus.READY_FOR_PICKUP) {
                 donation.get().setStatus(DonationStatus.PICKED_UP);
             }
-            donationService.updateDonationStatus(donation.get());
+            donationServiceImpl.updateDonationStatus(donation.get());
         }
 
         return "redirect:/user/donations"; // Redirect to the user's donations page

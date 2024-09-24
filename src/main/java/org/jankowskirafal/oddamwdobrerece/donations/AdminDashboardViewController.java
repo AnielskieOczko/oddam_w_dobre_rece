@@ -25,9 +25,9 @@ import java.util.Optional;
 public class AdminDashboardViewController {
 
     private static final Logger logger = LoggerFactory.getLogger(AdminDashboardViewController.class);
-    private final DonationService donationService;
-    private final InstitutionService institutionService;
-    private final CategoryService categoryService;
+    private final DonationService donationServiceImpl;
+    private final InstitutionService institutionServiceImpl;
+    private final CategoryService categoryServiceImpl;
 
     @GetMapping
     public String displayDonationList(Model model,
@@ -36,14 +36,14 @@ public class AdminDashboardViewController {
                                       @RequestParam(defaultValue = "5") int size,
                                       @RequestParam(required = false, defaultValue = "") String search) {
 
-        Page<Donation> donationPage = donationService.getDonations(search,
+        Page<Donation> donationPage = donationServiceImpl.getDonations(search,
                 donationFilterDTO,
                 page - 1,
                 size);
 
         model.addAttribute("donations", donationPage.getContent());
-        model.addAttribute("institutions", institutionService.getAllInstitutionsForDropdown());
-        model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("institutions", institutionServiceImpl.getAllInstitutionsForDropdown());
+        model.addAttribute("categories", categoryServiceImpl.getAllCategories());
         model.addAttribute("filter", donationFilterDTO);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", donationPage.getTotalPages());
@@ -74,9 +74,9 @@ public class AdminDashboardViewController {
         Donation donation = adminDonationFormDto.donation();
 
         if (donation.getDonationId() == null) {
-            donationService.saveDonation(donation);
+            donationServiceImpl.saveDonation(donation);
         } else {
-            donationService.updateDonation(donation);
+            donationServiceImpl.updateDonation(donation);
         }
 
         redirectAttributes.addFlashAttribute("message", "Dar został pomyślnie zapisany.");
@@ -86,12 +86,12 @@ public class AdminDashboardViewController {
     @GetMapping("/edit/{id}")
     public String showEditDonationForm(@PathVariable Long id, Model model) {
 
-        Optional<Donation> donation = donationService.getDonationById(id);
+        Optional<Donation> donation = donationServiceImpl.getDonationById(id);
 
         if (donation.isPresent()) {
             AdminDonationFormDto adminDonationFormDto = new AdminDonationFormDto(
-                    categoryService.getAllCategories(),
-                    institutionService.getAll(),
+                    categoryServiceImpl.getAllCategories(),
+                    institutionServiceImpl.getAll(),
                     Arrays.stream(DonationStatus.values()).toList(),
                     donation.get(),
                     new ContactForm()
@@ -111,7 +111,7 @@ public class AdminDashboardViewController {
 
     @PostMapping("/delete/{id}")
     public String deleteInstitution(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        donationService.deleteDonation(id);
+        donationServiceImpl.deleteDonation(id);
         redirectAttributes.addFlashAttribute("message", "Dar została usunięta.");
         return "redirect:/admin/donations";
     }

@@ -5,14 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jankowskirafal.oddamwdobrerece.categories.Category;
 import org.jankowskirafal.oddamwdobrerece.categories.CategoryService;
+import org.jankowskirafal.oddamwdobrerece.categories.CategoryServiceImpl;
 import org.jankowskirafal.oddamwdobrerece.donations.Donation;
 import org.jankowskirafal.oddamwdobrerece.donations.DonationService;
+import org.jankowskirafal.oddamwdobrerece.donations.DonationServiceImpl;
 import org.jankowskirafal.oddamwdobrerece.institutions.Institution;
 import org.jankowskirafal.oddamwdobrerece.institutions.InstitutionService;
-import org.jankowskirafal.oddamwdobrerece.users.Authority;
-import org.jankowskirafal.oddamwdobrerece.users.AuthorityService;
-import org.jankowskirafal.oddamwdobrerece.users.User;
-import org.jankowskirafal.oddamwdobrerece.users.UserServiceImpl;
+import org.jankowskirafal.oddamwdobrerece.users.*;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -29,9 +28,9 @@ public class TestDataLoader {
 
 
     private final InstitutionService institutionService;
-    private final CategoryService categoryService;
-    private final DonationService donationService;
-    private final UserServiceImpl userServiceImpl;
+    private final CategoryService categoryServiceImpl;
+    private final DonationService donationServiceImpl;
+    private final UserService userServiceImpl;
     private final AuthorityService authorityService;
 
     private static final Random random = new Random();
@@ -127,7 +126,7 @@ public class TestDataLoader {
         categoryTypes.forEach(categoryType -> {
             Category category = new Category();
             category.setName(categoryType);
-            categoryService.addCategory(category);
+            categoryServiceImpl.addCategory(category);
         });
     }
 
@@ -183,8 +182,8 @@ public class TestDataLoader {
 
             for (int j = 0; j < numCategories; j++) {
                 // Fetch a random existing Category from the database
-                Long randomCategoryId = (long) random.nextInt(categoryService.getAllCategories().size()) + 1; // Assuming you have at least one category
-                Optional<Category> category = Optional.ofNullable(categoryService.getCategoryById(randomCategoryId));
+                Long randomCategoryId = (long) random.nextInt(categoryServiceImpl.getAllCategories().size()) + 1; // Assuming you have at least one category
+                Optional<Category> category = Optional.ofNullable(categoryServiceImpl.getCategoryById(randomCategoryId));
                 category.ifPresent(donationCategories::add);
             }
             donation.setCategories(donationCategories);
@@ -209,7 +208,7 @@ public class TestDataLoader {
             donations.add(donation);
         }
 
-        donationService.saveAll(donations);
+        donationServiceImpl.saveAll(donations);
     }
 
 }
