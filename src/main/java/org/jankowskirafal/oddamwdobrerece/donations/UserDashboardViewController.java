@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -34,8 +35,8 @@ public class UserDashboardViewController {
     private final CategoryService categoryService;
 
 
-    @GetMapping
-    public String displayDonationList(Model model, @ModelAttribute DonationFilterDTO donationFilterDTO, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size, @RequestParam(required = false, defaultValue = "") String search) {
+    @GetMapping()
+    public String displayDonationList2(Model model, @ModelAttribute DonationFilterDTO donationFilterDTO, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size, @RequestParam(required = false, defaultValue = "") String search) {
 
         Page<Donation> donationPage = donationService.getDonations(search, donationFilterDTO, page - 1, size);
 
@@ -48,7 +49,7 @@ public class UserDashboardViewController {
         model.addAttribute("search", search);
         log.info("Logged in user: {}", SecurityContextHolder.getContext().getAuthentication().getName());
 
-        return "/user/user_donations_list";
+        return "/user/user-donation-list";
     }
 
     @PostMapping("/save")
@@ -106,9 +107,8 @@ public class UserDashboardViewController {
                 donation.get().setStatus(DonationStatus.READY_FOR_PICKUP);
             } else if (donation.get().getStatus() == DonationStatus.READY_FOR_PICKUP) {
                 donation.get().setStatus(DonationStatus.PICKED_UP);
-                // ... (Record date and time of pick-up) ...
             }
-            donationService.saveDonation(donation.get());
+            donationService.updateDonationStatus(donation.get());
         }
 
         return "redirect:/user/donations"; // Redirect to the user's donations page

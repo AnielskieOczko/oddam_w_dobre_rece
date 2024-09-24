@@ -1,11 +1,46 @@
 <!DOCTYPE html>
-<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<html lang="pl" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<nav class="admin-navbar" th:fragment="user-nav">
-    <div class="navbar-brand">User Panel</div>
-    <ul class="navbar-menu">
-        <li><a th:href="@{/user/donations}"><i class="fas fa-tachometer-alt"></i> Podarunki</a></li>
-        <li><a th:href="@{/user/account}"><i class="fas fa-users"></i> Moje konto</a></li>
-    </ul>
+<nav th:fragment="user-nav" class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">User Panel</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#userNavbar"
+                aria-controls="userNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="userNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/}">
+                        <i class="fas fa-home"></i> Strona główna
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/user/donations}">
+                        <i class="fas fa-gift"></i> Podarunki
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/user/account}">
+                        <i class="fas fa-user"></i> Moje konto
+                    </a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <span class="nav-link">
+                        Witaj, <span sec:authentication="name"></span>!
+                    </span>
+                </li>
+                <li class="nav-item">
+                    <form th:action="@{/logout}" method="post" class="d-flex">
+                        <button class="btn btn-outline-light" type="submit">
+                            <i class="fas fa-sign-out-alt"></i> Wyloguj
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
 </nav>
 </html>

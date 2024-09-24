@@ -14,9 +14,16 @@
             Witaj, <span sec:authentication="name"></span>!
         </span>
             <ul class="dropdown">
-                <li><a th:href="@{/user/acccount}">Profil</a></li>
-                <li><a th:href="@{/user/donations}">Moje zbiórki</a></li>
-                <li><a th:href="@{/logout}">Wyloguj</a></li>
+                <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a class="nav-link" th:href="@{/admin/donations}"><i class="fas fa-user-shield"></i> Panel Admina</a>
+                </li>
+                <li class="nav-item" sec:authorize="!hasRole('ROLE_ADMIN')">
+                    <a class="nav-link" th:href="@{/user/account}"><i class="fas fa-user"></i> Profil</a>
+                </li>
+                <li class="nav-item" sec:authorize="!hasRole('ROLE_ADMIN')">
+                    <a class="nav-link" th:href="@{/user/donations}"><i class="fas fa-user"></i> Moje zbiórki</a>
+                </li>
+<!--                <li><a th:href="@{/logout}">Wyloguj</a></li>-->
                 <li>
                     <form th:action="@{/logout}" method="post" style="display: inline;">
                         <button type="submit" class="btn btn--small btn--highlighted">Wyloguj</button>
@@ -24,11 +31,11 @@
                 </li>
             </ul>
         </li>
-        <li sec:authorize="isAuthenticated()">
-            <form th:action="@{/logout}" method="post" style="display: inline;">
-                <button type="submit" class="btn btn--small btn--highlighted">Wyloguj</button>
-            </form>
-        </li>
+<!--        <li sec:authorize="isAuthenticated()">-->
+<!--            <form th:action="@{/logout}" method="post" style="display: inline;">-->
+<!--                <button type="submit" class="btn btn&#45;&#45;small btn&#45;&#45;highlighted">Wyloguj</button>-->
+<!--            </form>-->
+<!--        </li>-->
     </ul>
 
     <ul>

@@ -1,90 +1,45 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Add/Edit Institution</title>
-    <style>
-        /* Basic form styling (adapt to your existing CSS) */
-        body {
-            font-family: sans-serif;
-        }
+<div th:replace="~{/admin/admin-header :: admin-head (pageTitle='Dodawanie/edycja instytucji')}"></div>
 
-        .container {
-            width: 500px;
-            margin: 50px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            box-sizing: border-box;
-        }
-
-        textarea {
-            height: 120px;
-        }
-
-        .error-message {
-            color: red;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-        .has-error input,
-        .has-error textarea {
-            border-color: red;
-        }
-
-        button[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-    </style>
-</head>
 <body>
+<div th:replace="~{/admin/admin-navbar :: admin-nav}"></div>
+<section class="container my-5">
+    <h2 class="mb-4" th:text="${institution.institutionId != null} ? 'Edycja Instytucji' : 'Dodawanie Instytucji'">
+    </h2>
 
-<div class="container">
-    <h2>Add/Edit Institution</h2>
-    <form th:action="@{/admin/institutions/save}" method="post" th:object="${institution}">
-        <input type="hidden" th:field="*{institutionId}"> <div class="form-group" th:classappend="${#fields.hasErrors('name')} ? 'has-error'">
-        <label for="name">Name:</label>
-        <input type="text" th:field="*{name}" id="name">
-        <span th:if="${#fields.hasErrors('name')}" th:errors="${name}" class="error-message"></span>
+    <div class="card">
+        <div class="card-body">
+            <form th:action="@{/admin/institutions/save}" method="post" th:object="${institution}" class="needs-validation"
+                  novalidate>
+                <input type="hidden" th:field="*{institutionId}">
 
-        <div class="form-group" th:classappend="*{#fields.hasErrors('description')} ? 'has-error'">
-            <label for="description">Description:</label>
-            <textarea th:field="*{description}" id="description"></textarea>
-            <span th:if="${#fields.hasErrors('description')}" th:errors="${description}" class="error-message"></span>
+                <div class="row g-3">
+                    <div class="col-md-12 form-group" th:classappend="${#fields.hasErrors('name')} ? 'has-error'">
+                        <label for="name" class="form-label">Nazwa:</label>
+                        <input type="text" th:field="*{name}" id="name" class="form-control" required>
+                        <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback d-block">
+                            <span th:errors="*{name}"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 form-group"
+                         th:classappend="${#fields.hasErrors('description')} ? 'has-error'">
+                        <label for="description" class="form-label">Opis:</label>
+                        <textarea th:field="*{description}" id="description" class="form-control"
+                                  required></textarea>
+                        <div th:if="${#fields.hasErrors('description')}" class="invalid-feedback d-block">
+                            <span th:errors="*{description}"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-end">
+                        <button type="submit" class="btn btn-primary">Zapisz instytucję</button>
+                    </div>
+                </div>
+            </form>
         </div>
-
-        <button type="submit">Save Institution</button>
-    </form>
-</div>
-
+    </div>
+</section>
 </body>
 </html>

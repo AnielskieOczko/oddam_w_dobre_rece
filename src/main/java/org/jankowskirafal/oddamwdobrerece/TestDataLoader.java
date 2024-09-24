@@ -9,11 +9,10 @@ import org.jankowskirafal.oddamwdobrerece.donations.Donation;
 import org.jankowskirafal.oddamwdobrerece.donations.DonationService;
 import org.jankowskirafal.oddamwdobrerece.institutions.Institution;
 import org.jankowskirafal.oddamwdobrerece.institutions.InstitutionService;
-import org.jankowskirafal.oddamwdobrerece.institutions.InstitutionServiceImpl;
 import org.jankowskirafal.oddamwdobrerece.users.Authority;
 import org.jankowskirafal.oddamwdobrerece.users.AuthorityService;
 import org.jankowskirafal.oddamwdobrerece.users.User;
-import org.jankowskirafal.oddamwdobrerece.users.UserService;
+import org.jankowskirafal.oddamwdobrerece.users.UserServiceImpl;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -32,7 +31,7 @@ public class TestDataLoader {
     private final InstitutionService institutionService;
     private final CategoryService categoryService;
     private final DonationService donationService;
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
     private final AuthorityService authorityService;
 
     private static final Random random = new Random();
@@ -102,13 +101,19 @@ public class TestDataLoader {
         user1.setEmail("testUser1@gmail.com");
         user1.setPassword("password1");
 
+        User user2 = new User();
+        user2.setEmail("testUser2@gmail.com");
+        user2.setPassword("password2");
+
         Set<String> roles = Set.of("ROLE_USER");
         Set<String> roles1 = Set.of("ROLE_USER", "ROLE_ADMIN");
+        Set<String> roles2 = Set.of("ROLE_ADMIN");
 
 
 
-        userService.createUser(user, roles);
-        userService.createUser(user1, roles1);
+        userServiceImpl.createUser(user, roles);
+        userServiceImpl.createUser(user1, roles1);
+        userServiceImpl.createUser(user2, roles2);
 
 
     }
@@ -165,7 +170,7 @@ public class TestDataLoader {
     protected void loadDonations() {
         List<Institution> institutions = institutionService.getAll();
         List<Donation> donations = new ArrayList<>();
-        List<User> users = userService.getAll();
+        List<User> users = userServiceImpl.getAll();
         users.add(null);
 
         for (int i = 0; i < 10; i++) {

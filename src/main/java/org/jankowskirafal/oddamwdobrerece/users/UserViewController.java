@@ -2,13 +2,13 @@ package org.jankowskirafal.oddamwdobrerece.users;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.jankowskirafal.oddamwdobrerece.donations.AdminDashboardViewController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,14 +22,19 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @AllArgsConstructor
 public class UserViewController {
 
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
     private static final Logger logger = LoggerFactory.getLogger(UserViewController.class);
+    private final UserDetailsService userDetailsService;
+
+
+
+
 
     @GetMapping("/account")
     public String userAccount(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
-        User user = userService.getByEmail(email)
+        User user = userServiceImpl.getByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         model.addAttribute("user", user);
@@ -53,7 +58,7 @@ public class UserViewController {
 
         User user = getCurrentUser();
 
-        if (!registrationDto.email().equals(user.getEmail()) && userService.getByEmail(registrationDto.email()).isPresent()) {
+        if (!registrationDto.email().equals(user.getEmail()) && userServiceImpl.getByEmail(registrationDto.email()).isPresent()) {
             bindingResult.rejectValue("email", "error.registrationDto", "Email is already in use");
             return "/user/user-edit-form";
         }
@@ -67,21 +72,18 @@ public class UserViewController {
         }
 
         user.setEmail(registrationDto.email());
-        userService.updateUser(user);
+        userServiceImpl.updateUser(user);
 
         redirectAttributes.addFlashAttribute("message", "Your account has been updated successfully");
 
-
-
         // Re-authenticate with the new user details
-        UserDetails userDetails = .loadUserByUsername(user.getEmail());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
         Authentication newAuth = new UsernamePasswordAuthenticationToken(userDetails, user.getPassword(), userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(newAuth);
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
         logger.info(email);
-
 
 
         return "redirect:/user/account";
@@ -91,7 +93,7 @@ public class UserViewController {
     private User getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
-        return userService.getByEmail(email)
+        return userServiceImpl.getByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 

@@ -1,108 +1,58 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Add/Edit User</title>
-    <style>
-        /* Basic form styling (adapt to your existing CSS) */
-        body {
-            font-family: sans-serif;
-        }
-
-        .container {
-            width: 500px;
-            margin: 50px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            box-sizing: border-box;
-        }
-
-        textarea {
-            height: 120px;
-        }
-
-        .error-message {
-            color: red;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-        .has-error input,
-        .has-error textarea {
-            border-color: red;
-        }
-
-        button[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-    </style>
-</head>
+<div th:replace="~{/admin/admin-header :: admin-head (pageTitle='Dodawanie/edycja użytkownika')}"></div>
 <body>
+<div th:replace="~{/admin/admin-navbar :: admin-nav}"></div>
+<section class="container my-5">
+    <h2 class="mb-4" th:text="${user.id != null} ? 'Edycja Użytkownika' : 'Dodawanie Użytkownika'"></h2>
 
-<div class="container">
-    <h2>Add/Edit User</h2>
-    <form th:action="@{/admin/users/save}" method="post" th:object="${user}">
-        <input type="hidden" th:field="*{id}">
+    <div class="card">
+        <div class="card-body">
+            <form th:action="@{/admin/users/save}" method="post" th:object="${user}" class="needs-validation" novalidate>
+                <input type="hidden" th:field="*{id}">
 
-        <div class="form-group" th:classappend="${#fields.hasErrors('email')} ? 'has-error'">
-            <label for="email">Email:</label>
-            <input type="email" th:field="*{email}" id="email">
-            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></span>
+                <div class="row g-3">
+                    <div class="col-md-12 form-group" th:classappend="${#fields.hasErrors('email')} ? 'has-error'">
+                        <label for="email" class="form-label">Email:</label>
+                        <input type="email" th:field="*{email}" id="email" class="form-control" required>
+                        <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback d-block">
+                            <span th:errors="*{email}"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 form-group" th:classappend="${#fields.hasErrors('password')} ? 'has-error'">
+                        <label for="password" class="form-label">Password:</label>
+                        <input type="password" th:field="*{password}" id="password" class="form-control"
+                               th:required="${user.id == null}">
+                        <div th:if="${#fields.hasErrors('password')}" class="invalid-feedback d-block">
+                            <span th:errors="*{password}"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 form-group">
+                        <label for="authorities" class="form-label">Role:</label>
+                        <select id="authorities" multiple="multiple" th:field="${user.authorities}" class="form-select" required>
+                            <option th:each="authority : ${allAuthorities}"
+                                    th:value="${authority.name}"
+                                    th:text="${authority.name}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12 form-group">
+                        <div class="form-check">
+                            <input type="checkbox" th:field="*{active}" id="isActive" class="form-check-input">
+                            <label for="isActive" class="form-check-label">Aktywny:</label>
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-end">
+                        <button type="submit" class="btn btn-primary">Zapisz użytkownika</button>
+                    </div>
+                </div>
+            </form>
         </div>
-
-        <div class="form-group" th:classappend="${#fields.hasErrors('password')} ? 'has-error'">
-            <label for="password">Password:</label>
-            <input type="password" th:field="*{password}" id="password">
-            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></span>
-        </div>
-
-        <div class="form-group">
-            <label for="authorities">Roles:</label>
-            <select id="authorities" multiple="multiple" th:field="${user.authorities}">
-                <option th:each="authority : ${allAuthorities}"
-                        th:value="${authority.name}"
-                        th:text="${authority.name}">
-                </option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="isActive">Active:</label>
-            <input type="checkbox" th:field="*{active}" id="isActive">
-        </div>
-
-        <button type="submit">Save User</button>
-    </form>
-</div>
-
+    </div>
+</section>
 </body>
 </html>

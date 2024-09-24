@@ -113,7 +113,7 @@ public class DonationService {
 
     public void updateDonation(Donation donation) {
 
-        donation.updateDateTime = LocalDateTime.now();
+        donation.setUpdateDateTime(LocalDateTime.now());
 
         donationRepository.updateDonation(
                 donation.getDonationId(),
@@ -128,18 +128,18 @@ public class DonationService {
                 donation.getInstitution(),
                 donation.getUser(),
                 donation.getStatus(),
-                donation.updateDateTime
+                donation.getUpdateDateTime()
         );
     }
 
     public void updateDonationStatus(Donation donation) {
 
-        donation.updateDateTime = LocalDateTime.now();
+        donation.setUpdateDateTime(LocalDateTime.now());
 
         donationRepository.updateDonationStatus(
                 donation.getDonationId(),
                 donation.getStatus(),
-                donation.updateDateTime
+                donation.getUpdateDateTime()
         );
     }
 
