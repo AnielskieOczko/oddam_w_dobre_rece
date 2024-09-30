@@ -54,18 +54,18 @@ public class InstitutionAdminViewController {
             institutionService.updateInstitution(institution);
         }
 
-        institutionService.saveInstitution(institution);
         redirectAttributes.addFlashAttribute("message", "Fundacja została pomyślnie zapisana.");
         return "redirect:/admin/institutions";
     }
 
     @GetMapping("/edit/{id}")
-    public String showEditInstitutionForm(@PathVariable Long id, Model model) {
+    public String showEditInstitutionForm(@PathVariable Long id,
+                                          Model model) {
 
         Optional<Institution> institution = institutionService.getInstitutionById(id);
 
         if (institution.isPresent()) {
-            model.addAttribute("institution", institution);
+            model.addAttribute("institution", institution.get());
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Institution not found.");
         }

@@ -23,3 +23,4 @@ public interface InstitutionRepository extends JpaRepository<Institution, Long> 
     void updateInstitution(@Param("id") Long id, @Param("name") String name, @Param("description") String description);
 
 }
+

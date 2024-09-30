@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -21,11 +22,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/admin")
 public class AdminUsersViewController {
 
-    private final AuthorityService authorityService;
+    private final AuthorityService authorityServiceImpl;
     private final UserService userServiceImpl;
     private static final String ROLE_USER = "ROLE_USER";
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
     private static final String ALL_AUTHORITIES = "allAuthorities";
+    private static final String ADMIN_ADD_FORM = "/admin/admin_add_form";
 
     @GetMapping("/users")
     public String listUsers(Model model,
@@ -43,7 +45,7 @@ public class AdminUsersViewController {
     @GetMapping({"/users/add"})
     public String displayAddUserForm(Model model) {
         User user = new User();
-        List<Authority> allAuthorities = authorityService.getAllAuthorities();
+        List<Authority> allAuthorities = authorityServiceImpl.getAllAuthorities();
         allAuthorities = allAuthorities.stream()
                 .filter(authority -> authority.getName().equals(ROLE_USER))
                 .toList();
@@ -67,7 +69,7 @@ public class AdminUsersViewController {
     @GetMapping({"/users/edit/{id}"})
     public String displayEditUserForm(@PathVariable Long id, Model model) {
 
-        model.addAttribute(ALL_AUTHORITIES, authorityService.getAllAuthorities());
+        model.addAttribute(ALL_AUTHORITIES, authorityServiceImpl.getAllAuthorities());
         Optional<User> user = userServiceImpl.getUserById(id);
 
         if (user.isPresent()) {
@@ -95,13 +97,13 @@ public class AdminUsersViewController {
     @GetMapping({"/admins/add"})
     public String displayAddAdminForm(Model model) {
         User user = new User();
-        List<Authority> allAuthorities = authorityService.getAllAuthorities();
+        List<Authority> allAuthorities = authorityServiceImpl.getAllAuthorities();
         allAuthorities = allAuthorities.stream()
                 .filter(authority -> authority.getName().equals(ROLE_ADMIN))
                 .toList();
         model.addAttribute("user", user);
         model.addAttribute(ALL_AUTHORITIES, allAuthorities);
-        return "/admin/admin_add_form";
+        return ADMIN_ADD_FORM;
     }
 
     @PostMapping("/admins/save")
@@ -112,7 +114,7 @@ public class AdminUsersViewController {
     @GetMapping({"/admins/edit/{id}"})
     public String displayEditAdminForm(@PathVariable Long id, Model model) {
 
-        model.addAttribute(ALL_AUTHORITIES, authorityService.getAllAuthorities());
+        model.addAttribute(ALL_AUTHORITIES, authorityServiceImpl.getAllAuthorities());
 
         Optional<User> user = userServiceImpl.getUserById(id);
 
@@ -122,7 +124,7 @@ public class AdminUsersViewController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
         }
 
-        return "/admin/admin_add_form";
+        return ADMIN_ADD_FORM;
     }
 
     @PostMapping({"admins/delete/{id}"})
@@ -135,8 +137,8 @@ public class AdminUsersViewController {
 
     private String handleSaveUser(User user, BindingResult bindingResult, Model model, String redirectUrl) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute(ALL_AUTHORITIES, authorityService.getAllAuthorities());
-            return "/admin/admin_add_form";
+            model.addAttribute(ALL_AUTHORITIES, authorityServiceImpl.getAllAuthorities());
+            return ADMIN_ADD_FORM;
         }
 
         Set<String> roleNames = user.getAuthorities().stream()
@@ -151,4 +153,33 @@ public class AdminUsersViewController {
 
         return "redirect:" + redirectUrl;
     }
+
+//    private String handleSaveUser(User user, BindingResult bindingResult, Model model, String redirectUrl) {
+//        if (bindingResult.hasErrors()) {
+//            model.addAttribute(ALL_AUTHORITIES, authorityServiceImpl.getAllAuthorities());
+//            return ADMIN_ADD_FORM;
+//        }
+//
+//        // 1. Get authority names from the form (might be a comma-separated string or an array)
+//        String[] authorityNames = user.getAuthorities() != null
+//                ? user.getAuthorities().stream().map(Authority::getName).toArray(String[]::new)
+//                : new String[0];
+//
+//        // 2. Convert authority names to a Set<Authority>
+//        Set<Authority> authorities = Arrays.stream(authorityNames)
+//                .map(authorityServiceImpl::findAuthorityByRoleName)
+//                .filter(Optional::isPresent)
+//                .map(Optional::get)
+//                .collect(Collectors.toSet());
+//
+//        user.setAuthorities(authorities); // Set the authorities on the user object
+//
+//        if (user.getId() == null) {
+//            userServiceImpl.createUser(user, authorities.stream().map(Authority::getName).collect(Collectors.toSet()));
+//        } else {
+//            userServiceImpl.updateUser(user, authorities.stream().map(Authority::getName).collect(Collectors.toSet()));
+//        }
+//
+//        return "redirect:" + redirectUrl;
+//    }
 }

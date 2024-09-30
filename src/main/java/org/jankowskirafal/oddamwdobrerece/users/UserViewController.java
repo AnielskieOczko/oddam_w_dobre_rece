@@ -22,12 +22,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @AllArgsConstructor
 public class UserViewController {
 
-    private final UserServiceImpl userServiceImpl;
+    private final UserService userServiceImpl;
     private static final Logger logger = LoggerFactory.getLogger(UserViewController.class);
     private final UserDetailsService userDetailsService;
-
-
-
 
 
     @GetMapping("/account")

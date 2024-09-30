@@ -5,10 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jankowskirafal.oddamwdobrerece.categories.Category;
 import org.jankowskirafal.oddamwdobrerece.categories.CategoryService;
-import org.jankowskirafal.oddamwdobrerece.categories.CategoryServiceImpl;
 import org.jankowskirafal.oddamwdobrerece.donations.Donation;
 import org.jankowskirafal.oddamwdobrerece.donations.DonationService;
-import org.jankowskirafal.oddamwdobrerece.donations.DonationServiceImpl;
 import org.jankowskirafal.oddamwdobrerece.institutions.Institution;
 import org.jankowskirafal.oddamwdobrerece.institutions.InstitutionService;
 import org.jankowskirafal.oddamwdobrerece.users.*;
@@ -31,7 +29,7 @@ public class TestDataLoader {
     private final CategoryService categoryServiceImpl;
     private final DonationService donationServiceImpl;
     private final UserService userServiceImpl;
-    private final AuthorityService authorityService;
+    private final AuthorityServiceImpl authorityServiceImpl;
 
     private static final Random random = new Random();
 
@@ -84,8 +82,8 @@ public class TestDataLoader {
         Authority authority1 =  new Authority();
         authority1.setName("ROLE_ADMIN");
 
-        authorityService.addNewAuthority(authority);
-        authorityService.addNewAuthority(authority1);
+        authorityServiceImpl.addNewAuthority(authority);
+        authorityServiceImpl.addNewAuthority(authority1);
 
 
     }

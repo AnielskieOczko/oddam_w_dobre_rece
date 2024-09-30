@@ -1,27 +1,13 @@
 package org.jankowskirafal.oddamwdobrerece.users;
 
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-@Service
-@AllArgsConstructor
-public class AuthorityService {
+public interface AuthorityService {
 
-    private final AuthorityRepository authorityRepository;
+    void addNewAuthority(Authority authority);
 
-    public void addNewAuthority(Authority authority) {
-        authorityRepository.save(authority);
-    }
+    List<Authority> getAllAuthorities();
 
-    public List<Authority> getAllAuthorities() {
-        return authorityRepository.findAll();
-    }
-
-    public Optional<Authority> findAuthorityByRoleName(String roleName) {
-        return authorityRepository.findByName(roleName);
-    }
+    Optional<Authority> findAuthorityByRoleName(String roleName);
 }

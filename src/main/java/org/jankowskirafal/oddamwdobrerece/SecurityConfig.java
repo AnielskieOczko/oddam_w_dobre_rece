@@ -18,7 +18,6 @@ import org.springframework.security.web.SecurityFilterChain;
 //@AllArgsConstructor
 public class SecurityConfig {
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -50,6 +49,4 @@ public class SecurityConfig {
                 .map(UserPrincipal::build)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + userEmail));
     }
-
-
 }
